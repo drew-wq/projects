@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <style>
+    :root[data-theme="dark"] {
+      --bg: #0d0d12;
+      --card-bg: #18181f;
+      --card-hover: #21212e;
+      --text: #e4e4f0;
+      --text-muted: #7a7a99;
+      --border: rgba(255, 255, 255, 0.07);
+      --shadow: rgba(0, 0, 0, 0.5);
+      --surface: #22222e;
+      --input-bg: #14141c;
+      --accent: #6366f1;
+      --accent-hover: #7577f5;
+      --danger: #e05252;
+    }
+    :root[data-theme="light"] {
+      --bg: #eeeef3;
+      --card-bg: #ffffff;
+      --card-hover: #f5f5fc;
+      --text: #1a1a2e;
+      --text-muted: #6666aa;
+      --border: rgba(0, 0, 0, 0.07);
+      --shadow: rgba(0, 0, 0, 0.08);
+      --surface: #e4e4ec;
+      --input-bg: #f8f8fd;
+      --accent: #6366f1;
+      --accent-hover: #4b4de0;
+      --danger: #e05252;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 100px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    /* ── Top bar ──────────────────────────────────────── */
+    .topbar {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 48px;
+    }
+
+    .icon-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 9px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .icon-btn:hover { color: var(--text); background: var(--card-hover); }
+    .icon-btn.active { background: var(--accent); color: #fff; border-color: transparent; }
+
+    /* ── Grid ─────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 208px);
+      gap: 36px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    /* ── Tile ─────────────────────────────────────────── */
+    .tile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+      text-decoration: none;
+      color: var(--text);
+      padding: 36px 16px 28px;
+      border-radius: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: background 0.15s, transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .tile:hover:not(.no-hover) {
+      background: var(--card-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--shadow);
+    }
+    body.editing .tile { cursor: grab; }
+    body.editing .tile:active { cursor: grabbing; }
+    .tile.dragging { opacity: 0.35; }
+    .tile.drag-target { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+
+    .tile-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      object-fit: contain;
+      background: var(--surface);
+    }
+    .tile-fallback {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .tile-name {
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 176px;
+      transition: color 0.15s;
+    }
+    .tile:hover .tile-name { color: var(--text); }
+
+    /* delete badge */
+    .del-btn {
+      display: none;
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      width: 30px;
+      height: 30px;
+      background: var(--danger);
+      border: 2px solid var(--bg);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      z-index: 3;
+      transition: transform 0.1s;
+    }
+    .del-btn:hover { transform: scale(1.15); }
+    body.editing .del-btn { display: flex; }
+
+    /* ── Add tile ─────────────────────────────────────── */
+    .add-tile {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 36px 16px 28px;
+      border-radius: 28px;
+      border: 2px dashed var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 24px;
+      font-weight: 500;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .add-tile:hover { border-color: var(--accent); color: var(--accent); }
+    .add-tile .plus { font-size: 52px; line-height: 1; font-weight: 300; }
+    body.editing .add-tile { display: flex; }
+
+    /* ── Edit bar (bottom) ────────────────────────────── */
+    .edit-bar {
+      display: none;
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 10px 10px 10px 20px;
+      box-shadow: 0 8px 32px var(--shadow);
+      gap: 14px;
+      align-items: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      z-index: 50;
+    }
+    body.editing .edit-bar { display: flex; }
+    .done-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .done-btn:hover { background: var(--accent-hover); }
+
+    /* ── Modal ────────────────────────────────────────── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+    .overlay.open { display: flex; }
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 28px 28px 24px;
+      width: 360px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+    .modal h2 { font-size: 17px; font-weight: 650; margin-bottom: 20px; }
+    .modal label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 5px;
+      margin-top: 14px;
+    }
+    .modal label:first-of-type { margin-top: 0; }
+    .modal input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 13px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .modal input:focus { border-color: var(--accent); }
+    .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 9px;
+      border: none;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--card-hover); }
+
+    /* ── Scrollbar ────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <button class="icon-btn" id="themeBtn" title="Toggle theme">☀️</button>
+    <button class="icon-btn" id="editBtn" title="Edit shortcuts">✏️</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="edit-bar">
+    <span>Drag to reorder · × to remove</span>
+    <button class="done-btn" id="doneBtn">Done</button>
+  </div>
+
+  <!-- Add shortcut modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Add shortcut</h2>
+      <label>Name</label>
+      <input id="inName" type="text" placeholder="Google" autocomplete="off" />
+      <label>URL</label>
+      <input id="inUrl" type="url" placeholder="https://example.com" autocomplete="off" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+        <button class="btn btn-primary" id="addBtn">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── Default shortcuts ────────────────────────────────
+    // Edit this array to change the initial set of shortcuts.
+    const DEFAULTS = [
+      { name: "Google",   url: "https://google.com" },
+      { name: "Gmail",    url: "https://mail.google.com" },
+      { name: "GitHub",   url: "https://github.com" },
+      { name: "YouTube",  url: "https://youtube.com" },
+      { name: "Linear",   url: "https://linear.app" },
+      { name: "Notion",   url: "https://notion.so" },
+      { name: "ChatGPT",  url: "https://chatgpt.com" },
+      { name: "Figma",    url: "https://figma.com" },
+      { name: "X",        url: "https://x.com" },
+      { name: "LinkedIn", url: "https://linkedin.com" },
+      { name: "Vercel",   url: "https://vercel.com" },
+      { name: "Stripe",   url: "https://stripe.com" },
+    ];
+
+    const SK = "hs_shortcuts";
+    const TK = "hs_theme";
+
+    let shortcuts = JSON.parse(localStorage.getItem(SK) || "null") || DEFAULTS;
+    let editing = false;
+    let dragSrcIdx = null;
+
+    // ── Theme ────────────────────────────────────────────
+    const root = document.documentElement;
+    const themeBtn = document.getElementById("themeBtn");
+
+    function applyTheme(t) {
+      root.setAttribute("data-theme", t);
+      themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
+      localStorage.setItem(TK, t);
+    }
+
+    applyTheme(localStorage.getItem(TK) || "dark");
+
+    themeBtn.addEventListener("click", () => {
+      applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    });
+
+    // ── Edit mode ────────────────────────────────────────
+    const editBtn = document.getElementById("editBtn");
+    document.getElementById("doneBtn").addEventListener("click", stopEdit);
+
+    editBtn.addEventListener("click", () => {
+      editing ? stopEdit() : startEdit();
+    });
+
+    function startEdit() {
+      editing = true;
+      document.body.classList.add("editing");
+      editBtn.classList.add("active");
+    }
+    function stopEdit() {
+      editing = false;
+      document.body.classList.remove("editing");
+      editBtn.classList.remove("active");
+    }
+
+    // ── Persistence ──────────────────────────────────────
+    function save() { localStorage.setItem(SK, JSON.stringify(shortcuts)); }
+
+    // ── Favicon ──────────────────────────────────────────
+    function faviconSrc(url) {
+      try {
+        return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=64`;
+      } catch { return ""; }
+    }
+
+    // ── Render ───────────────────────────────────────────
+    function render() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+
+      shortcuts.forEach((s, i) => {
+        const tile = document.createElement("a");
+        tile.className = "tile";
+        tile.href = s.url;
+        tile.title = s.url;
+        tile.setAttribute("draggable", "true");
+        tile.dataset.i = i;
+
+        // block navigation while editing
+        tile.addEventListener("click", e => { if (editing) e.preventDefault(); });
+
+        // favicon with letter fallback
+        const img = document.createElement("img");
+        img.className = "tile-icon";
+        img.src = faviconSrc(s.url);
+        img.alt = "";
+        img.addEventListener("error", () => {
+          img.replaceWith(letterIcon(s.name));
+        });
+
+        const name = document.createElement("span");
+        name.className = "tile-name";
+        name.textContent = s.name;
+
+        const del = document.createElement("button");
+        del.className = "del-btn";
+        del.textContent = "×";
+        del.title = "Remove";
+        del.addEventListener("click", e => {
+          e.preventDefault();
+          e.stopPropagation();
+          shortcuts.splice(i, 1);
+          save();
+          render();
+        });
+
+        tile.append(img, name, del);
+
+        // ── Drag & drop ──
+        tile.addEventListener("dragstart", e => {
+          if (!editing) { e.preventDefault(); return; }
+          dragSrcIdx = i;
+          setTimeout(() => tile.classList.add("dragging"), 0);
+          e.dataTransfer.effectAllowed = "move";
+        });
+        tile.addEventListener("dragend", () => {
+          tile.classList.remove("dragging");
+        });
+        tile.addEventListener("dragover", e => {
+          if (!editing || dragSrcIdx === i) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          tile.classList.add("drag-target");
+        });
+        tile.addEventListener("dragleave", () => tile.classList.remove("drag-target"));
+        tile.addEventListener("drop", e => {
+          if (!editing || dragSrcIdx === null || dragSrcIdx === i) return;
+          e.preventDefault();
+          tile.classList.remove("drag-target");
+          const moved = shortcuts.splice(dragSrcIdx, 1)[0];
+          shortcuts.splice(i, 0, moved);
+          dragSrcIdx = null;
+          save();
+          render();
+        });
+
+        grid.appendChild(tile);
+      });
+
+      // Add button (only visible in edit mode)
+      const addTile = document.createElement("button");
+      addTile.className = "add-tile";
+      addTile.innerHTML = `<span class="plus">+</span><span>Add</span>`;
+      addTile.addEventListener("click", openModal);
+      grid.appendChild(addTile);
+    }
+
+    function letterIcon(name) {
+      const el = document.createElement("div");
+      el.className = "tile-fallback";
+      el.textContent = (name || "?")[0].toUpperCase();
+      return el;
+    }
+
+    // ── Modal ────────────────────────────────────────────
+    const overlay = document.getElementById("overlay");
+    const inName  = document.getElementById("inName");
+    const inUrl   = document.getElementById("inUrl");
+
+    function openModal() {
+      inName.value = "";
+      inUrl.value = "";
+      overlay.classList.add("open");
+      inName.focus();
+    }
+    function closeModal() { overlay.classList.remove("open"); }
+
+    document.getElementById("cancelBtn").addEventListener("click", closeModal);
+    overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+
+    document.getElementById("addBtn").addEventListener("click", () => {
+      let url  = inUrl.value.trim();
+      let name = inName.value.trim();
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+      if (!name) {
+        try { name = new URL(url).hostname.replace(/^www\./, ""); }
+        catch { name = url; }
+      }
+      shortcuts.push({ name, url });
+      save();
+      closeModal();
+      render();
+    });
+
+    overlay.addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("addBtn").click();
+      if (e.key === "Escape") closeModal();
+    });
+
+    render();
+  </script>
+</body>
+</html>
