@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World</title>
+  <style>
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+    .controls { display: flex; align-items: center; gap: 12px; }
+  </style>
+</head>
+<body>
+  <h1 id="text">Hello World</h1>
+  <div class="controls">
+    <span>A</span>
+    <input type="range" id="slider" min="12" max="120" value="32">
+    <span style="font-size: 2em;">A</span>
+  </div>
+  <script>
+    const text = document.getElementById('text');
+    const slider = document.getElementById('slider');
+    text.style.fontSize = slider.value + 'px';
+    slider.addEventListener('input', () => text.style.fontSize = slider.value + 'px');
+  </script>
+</body>
+</html>
