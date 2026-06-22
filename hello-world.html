@@ -8,10 +8,52 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&family=Pacifico&family=Space+Mono&family=Merriweather&display=swap" rel="stylesheet">
   <style>
-    body { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+    :root {
+      --bg-color: #1a1a1a;
+      --text-color: #ffffff;
+      --border-color: #444;
+    }
+    body.light-mode {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --border-color: #ccc;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      transition: background-color 0.3s, color 0.3s;
+    }
     .controls { display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .control-row { display: flex; align-items: center; gap: 12px; }
-    select { padding: 6px 10px; font-size: 1em; border-radius: 6px; border: 1px solid #ccc; cursor: pointer; }
+    select {
+      padding: 6px 10px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+    }
+    .toggle-btn {
+      padding: 6px 12px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .toggle-btn:hover {
+      opacity: 0.8;
+    }
   </style>
 </head>
 <body>
@@ -31,15 +73,36 @@
         <option value="Merriweather">Merriweather</option>
       </select>
     </div>
+    <div class="control-row">
+      <button id="themeToggle" class="toggle-btn">🌙 Dark Mode</button>
+    </div>
   </div>
   <script>
     const text = document.getElementById('text');
     const slider = document.getElementById('slider');
     const fontPicker = document.getElementById('fontPicker');
+    const themeToggle = document.getElementById('themeToggle');
+
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    document.body.classList.toggle('light-mode', savedTheme === 'light');
+    updateThemeButton();
+
     text.style.fontSize = slider.value + 'px';
     text.style.fontFamily = fontPicker.value;
     slider.addEventListener('input', () => text.style.fontSize = slider.value + 'px');
     fontPicker.addEventListener('change', () => text.style.fontFamily = fontPicker.value);
+
+    function updateThemeButton() {
+      const isLight = document.body.classList.contains('light-mode');
+      themeToggle.textContent = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      document.body.classList.toggle('light-mode');
+      const newTheme = document.body.classList.contains('light-mode') ? 'light' : 'dark';
+      localStorage.setItem('theme', newTheme);
+      updateThemeButton();
+    });
   </script>
 </body>
 </html>
