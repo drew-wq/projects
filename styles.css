@@ -1277,7 +1277,7 @@ footer {
   background: var(--n5-taupe);
 }
 
-.modal-error {
+.modal-error-container {
   padding: 16px;
   background: rgba(201, 74, 38, 0.1);
   border: 1px solid var(--ember);
@@ -1285,7 +1285,27 @@ footer {
   font-weight: 500;
   font-size: 14px;
   color: var(--ember);
-  margin-top: 12px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.modal-error-container:not(:empty) {
+  display: block;
+}
+
+.field-error {
+  display: block;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ember);
+  margin-top: 4px;
+  min-height: 18px;
+}
+
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"] {
+  border-color: var(--ember);
+  background: rgba(201, 74, 38, 0.05);
 }
 
 /* ==================== SCROLL LOCK ==================== */

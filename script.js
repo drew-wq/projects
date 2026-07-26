@@ -1,14 +1,11 @@
 // pearse&co site controller
-// Handles: mobile menu toggle, contact modal, partner card selection, form submission
-
-// TODO: Replace this with your actual form endpoint (e.g., https://formspree.io/f/xxxxx)
-const FORM_ENDPOINT = 'https://your-form-endpoint-here.example.com/submit';
+// Handles: mobile menu toggle, contact modal, partner card selection
+// Form submission is handled by @formspree/ajax
 
 class PearseController {
   constructor() {
     this.menuOpen = false;
     this.modalOpen = false;
-    this.formSent = false;
     this.activePerson = null;
 
     this.init();
@@ -89,10 +86,7 @@ class PearseController {
       this.closingCtaBtn.addEventListener('click', () => this.openModal());
     }
 
-    // Form
-    if (this.modalForm) {
-      this.modalForm.addEventListener('submit', (e) => this.submitForm(e));
-    }
+    // Success close button
     if (this.modalSuccessClose) {
       this.modalSuccessClose.addEventListener('click', () => this.closeModal());
     }
@@ -131,7 +125,6 @@ class PearseController {
 
   openModal() {
     this.modalOpen = true;
-    this.formSent = false;
     this.modalOverlay.classList.add('open');
     this.modalHeader.style.display = 'block';
     this.modalForm.style.display = 'flex';
@@ -140,7 +133,11 @@ class PearseController {
     // Reset form
     const inputs = this.modalForm.querySelectorAll('input, textarea');
     inputs.forEach(input => input.value = '');
-    this.clearFormError();
+    // Clear field errors
+    const errorSpans = this.modalForm.querySelectorAll('[data-fs-error]');
+    errorSpans.forEach(span => span.textContent = '');
+    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
+    if (errorContainer) errorContainer.textContent = '';
     // Focus trap: focus first input
     setTimeout(() => {
       const firstInput = this.modalForm.querySelector('input');
@@ -155,65 +152,8 @@ class PearseController {
   }
 
   // ==================== FORM ====================
-
-  async submitForm(e) {
-    e.preventDefault();
-    this.clearFormError();
-
-    const formData = new FormData(this.modalForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
-
-    if (!name || !email || !message) {
-      this.showFormError('All fields are required.');
-      return;
-    }
-
-    const payload = { name, email, message };
-
-    try {
-      const response = await fetch(FORM_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      // Success
-      this.formSent = true;
-      this.modalHeader.style.display = 'none';
-      this.modalForm.style.display = 'none';
-      this.modalSuccess.style.display = 'block';
-    } catch (error) {
-      console.error('Form submission error:', error);
-      this.showFormError(
-        `Unable to send message. Check that FORM_ENDPOINT is configured correctly, or try again later.`
-      );
-    }
-  }
-
-  showFormError(message) {
-    let errorEl = this.modalForm.querySelector('.modal-error');
-    if (!errorEl) {
-      errorEl = document.createElement('div');
-      errorEl.className = 'modal-error';
-      this.modalForm.insertBefore(errorEl, this.modalForm.firstChild);
-    }
-    errorEl.textContent = message;
-  }
-
-  clearFormError() {
-    const errorEl = this.modalForm?.querySelector('.modal-error');
-    if (errorEl) {
-      errorEl.remove();
-    }
-  }
+  // Form submission is handled by @formspree/ajax library
+  // No manual submission logic needed
 
   // ==================== PEOPLE CARDS ====================
 

@@ -280,32 +280,47 @@
       <p>Tell us the problem you keep rescheduling. We reply within a day.</p>
     </div>
 
-    <form class="modal-form" method="POST">
+    <div data-fs-error class="modal-error-container"></div>
+
+    <form id="contactForm" class="modal-form" method="POST">
       <div class="form-group">
         <label for="form-name">Name</label>
-        <input id="form-name" type="text" name="name" placeholder="Your name" required>
+        <input id="form-name" type="text" name="name" placeholder="Your name" data-fs-field required>
+        <span data-fs-error="name" class="field-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="form-organization">Organisation</label>
+        <input id="form-organization" type="text" name="organization" placeholder="Your company name" data-fs-field required>
+        <span data-fs-error="organization" class="field-error"></span>
       </div>
       <div class="form-group">
         <label for="form-email">Email</label>
-        <input id="form-email" type="email" name="email" placeholder="you@company.com" required>
+        <input id="form-email" type="email" name="email" placeholder="you@company.com" data-fs-field required>
+        <span data-fs-error="email" class="field-error"></span>
       </div>
       <div class="form-group">
         <label for="form-message">What's in your way?</label>
-        <textarea id="form-message" name="message" placeholder="A sentence or two is plenty." required></textarea>
+        <textarea id="form-message" name="message" placeholder="A sentence or two is plenty." data-fs-field required></textarea>
+        <span data-fs-error="message" class="field-error"></span>
       </div>
-      <button type="submit" class="modal-submit">Send it over →</button>
+      <button type="submit" class="modal-submit" data-fs-submit-btn>Send it over →</button>
     </form>
 
     <!-- Success View -->
-    <div class="modal-success" style="display: none;">
+    <div class="modal-success" data-fs-success style="display: none;">
       <div class="modal-success-icon">✓</div>
       <h2>Thanks — we're on it<span class="colon">:</span></h2>
-      <p>One of us will be in touch within a day.</p>
-      <button class="modal-success-close">Close</button>
+      <p>Check your email for a confirmation. One of us will be in touch within a day.</p>
+      <button type="button" class="modal-success-close">Close</button>
     </div>
   </div>
 </div>
 
+<script>
+  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+  formspree('initForm', { formElement: '#contactForm', formId: 'mnjebyyg' });
+</script>
+<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 <script src="./script.js" defer></script>
 
 </body>
