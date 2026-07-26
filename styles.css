@@ -1292,23 +1292,47 @@ footer {
 }
 
 .modal-error-container {
-  padding: 16px;
-  background: rgba(201, 74, 38, 0.1);
-  border: 1px solid var(--ember);
+  display: none;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: rgba(201, 74, 38, 0.08);
+  border: 1px solid rgba(201, 74, 38, 0.2);
   border-radius: 9px;
   font-weight: 500;
   font-size: 14px;
   color: var(--ember);
   margin-bottom: 16px;
-  display: none;
+  line-height: 1.5;
 }
 
 .modal-error-container:not(:empty) {
-  display: block;
+  display: flex;
+}
+
+.modal-error-container::before {
+  content: "";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  background: var(--ember);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  margin-top: 1px;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 11px 11px;
 }
 
 .field-error {
-  display: flex;
+  display: none;
   align-items: center;
   gap: 8px;
   font-weight: 500;
@@ -1317,6 +1341,11 @@ footer {
   margin-top: 7px;
   min-height: 18px;
   line-height: 1.4;
+}
+
+/* Show error message only when it has content */
+.field-error:not(:empty) {
+  display: flex;
 }
 
 .field-error::before {
@@ -1337,12 +1366,6 @@ footer {
   background-repeat: no-repeat;
   background-position: center;
   background-size: 10px 10px;
-}
-
-/* Suppress browser default validation UI and use custom error messages */
-.form-group input:invalid,
-.form-group textarea:invalid {
-  box-shadow: none !important;
 }
 
 .form-group input[aria-invalid="true"],
