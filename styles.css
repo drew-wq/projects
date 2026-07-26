@@ -1521,14 +1521,14 @@ footer {
 
 .modal-error-container {
   display: none;
-  align-items: center;
-  padding: 16px 18px;
-  background: #fff5f3;
-  border: 1px solid #f5cfc3;
-  border-radius: 11px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(201, 74, 38, 0.08);
+  border: 2px solid var(--ember);
+  border-radius: 12px;
   font-weight: 500;
-  font-size: 14px;
-  color: #b74419;
+  font-size: 13px;
+  color: var(--ember);
   margin-bottom: 20px;
   line-height: 1.5;
 }
@@ -1540,8 +1540,8 @@ footer {
 .field-error {
   display: none;
   font-weight: 500;
-  font-size: 13px;
-  color: #b74419;
+  font-size: 12px;
+  color: var(--ember);
   margin-top: 8px;
   min-height: 18px;
   line-height: 1.4;
@@ -1553,8 +1553,8 @@ footer {
 
 .form-group input[aria-invalid="true"],
 .form-group textarea[aria-invalid="true"] {
-  border-color: #d4523d;
-  background: #fff5f3;
+  border-color: var(--ember);
+  background: rgba(201, 74, 38, 0.04);
 }
 
 /* ==================== SCROLL LOCK ==================== */
