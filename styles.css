@@ -93,21 +93,24 @@ header {
   position: sticky;
   top: 0;
   z-index: 50;
+  min-height: 74px;
 }
 
 @media (max-width: 374px) {
   header {
     padding: 12px 16px;
+    min-height: 60px;
   }
-  
+
   .logo {
     font-size: 18px;
+    height: 36px;
   }
-  
+
   .logo svg {
     height: 22px;
   }
-  
+
   .mobile-menu-button {
     width: 36px;
     height: 36px;
@@ -125,6 +128,7 @@ header {
   line-height: 1;
   letter-spacing: -0.02em;
   font-family: var(--font-display);
+  height: 42px;
 }
 
 .logo svg {
@@ -182,6 +186,7 @@ nav.desktop-nav span {
   padding: 0;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .mobile-menu-button span {
@@ -305,6 +310,7 @@ nav.desktop-nav span {
 @media (min-width: 680px) {
   header {
     padding: 24px var(--space-tablet);
+    min-height: 90px;
   }
 
   nav.desktop-nav {
@@ -319,6 +325,7 @@ nav.desktop-nav span {
 @media (min-width: 1000px) {
   header {
     padding: 24px var(--space-desktop);
+    min-height: 90px;
   }
 
   nav.desktop-nav {
@@ -332,6 +339,13 @@ nav.desktop-nav span {
   }
 
   nav.desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+}
     display: none;
   }
 
