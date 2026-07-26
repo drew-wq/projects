@@ -65,6 +65,11 @@ a:hover {
   color: var(--denim-700);
 }
 
+a:focus-visible {
+  outline: 3px solid var(--denim-500);
+  outline-offset: 2px;
+}
+
 button {
   font-family: inherit;
   cursor: pointer;
@@ -72,9 +77,20 @@ button {
   transition: all 0.2s;
 }
 
+button:focus-visible {
+  outline: 3px solid var(--denim-500);
+  outline-offset: 2px;
+}
+
 input, textarea {
   font-family: inherit;
   font-size: inherit;
+}
+
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--denim-500);
+  outline-offset: 2px;
 }
 
 /* ==================== GOOGLE FONTS PRELOAD ==================== */
@@ -172,10 +188,32 @@ nav.desktop-nav span {
   font-weight: 600;
   font-size: 13px;
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.nav-button:hover::before {
+  opacity: 1;
 }
 
 .nav-button:hover {
   background: var(--denim-700);
+}
+
+.nav-button:active {
+  transform: scale(0.98);
 }
 
 .mobile-menu-button {
@@ -266,6 +304,11 @@ nav.desktop-nav span {
   opacity: 0;
   transition: transform 0.34s cubic-bezier(0.2, 0.7, 0.3, 1),
               opacity 0.3s;
+  cursor: pointer;
+}
+
+.mobile-menu-link:hover {
+  color: var(--denim-500);
 }
 
 .mobile-menu.open .mobile-menu-link:nth-child(1) {
@@ -293,6 +336,24 @@ nav.desktop-nav span {
   opacity: 0;
   transition: transform 0.34s cubic-bezier(0.2, 0.7, 0.3, 1),
               opacity 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.mobile-menu-contact::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.mobile-menu-contact:hover::before {
+  opacity: 1;
 }
 
 .mobile-menu.open .mobile-menu-contact {
@@ -424,10 +485,32 @@ section {
   border: none;
   cursor: pointer;
   animation: rise 0.8s 0.25s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.hero-cta:hover::before {
+  opacity: 1;
 }
 
 .hero-cta:hover {
   background: var(--denim-700);
+}
+
+.hero-cta:active {
+  transform: scale(0.98);
 }
 
 .hero-cta .colon {
@@ -534,6 +617,20 @@ section {
   background: var(--n1-bone);
   border-radius: 14px;
   padding: 26px;
+  transition: all 0.3s ease-out;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  background: var(--n2-sand);
+  box-shadow: 0 8px 24px rgba(22, 19, 15, 0.08);
+}
+
+.service-card:focus-visible {
+  outline: 3px solid var(--denim-500);
+  outline-offset: 2px;
 }
 
 .service-card h3 {
@@ -671,7 +768,7 @@ section {
   cursor: pointer;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s, background 0.2s;
+  transition: all 0.3s ease-out;
 }
 
 .reset-button.visible {
@@ -681,6 +778,12 @@ section {
 
 .reset-button:hover {
   background: var(--n1-bone);
+  border-color: var(--n4-stone);
+}
+
+.reset-button:focus-visible {
+  outline: 3px solid var(--denim-500);
+  outline-offset: 2px;
 }
 
 .people-grid {
@@ -701,7 +804,11 @@ section {
   padding: 28px 26px;
   overflow: hidden;
   pointer-events: auto;
-  transition: max-height 0.55s ease, opacity 0.4s ease, padding 0.4s ease;
+  transition: all 0.55s ease;
+}
+
+.person-card:hover {
+  transform: translateY(-2px);
 }
 
 .person-card.hidden {
@@ -762,6 +869,11 @@ section {
   font-size: 12px;
   color: var(--denim-500);
   cursor: pointer;
+  transition: color 0.2s ease-out;
+}
+
+.person-card:hover .person-cta {
+  color: var(--denim-700);
 }
 
 .person-cta .colon {
@@ -934,10 +1046,32 @@ section {
   font-weight: 600;
   font-size: 15px;
   border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.closing-cta button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.closing-cta button:hover::before {
+  opacity: 1;
 }
 
 .closing-cta button:hover {
   background: var(--denim-700);
+}
+
+.closing-cta button:active {
+  transform: scale(0.98);
 }
 
 @media (min-width: 680px) {
@@ -1053,10 +1187,12 @@ footer {
 
 .footer-bar a {
   color: rgba(250, 247, 241, 0.82);
+  transition: color 0.2s ease-out;
 }
 
 .footer-bar a:hover {
   color: white;
+  text-decoration: underline;
 }
 
 @media (min-width: 680px) {
@@ -1147,10 +1283,12 @@ footer {
   font-size: 18px;
   line-height: 1;
   cursor: pointer;
+  transition: all 0.2s ease-out;
 }
 
 .modal-close:hover {
   background: var(--n2-sand);
+  transform: scale(1.05);
 }
 
 .modal-header h2 {
@@ -1212,6 +1350,7 @@ footer {
 .form-group textarea:focus {
   border-color: var(--denim-500);
   box-shadow: 0 0 0 3px rgba(50, 104, 168, 0.15);
+  background: rgba(50, 104, 168, 0.02);
 }
 
 .form-group textarea {
@@ -1230,10 +1369,33 @@ footer {
   font-weight: 600;
   font-size: 15px;
   margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+}
+
+.modal-submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.modal-submit:hover::before {
+  opacity: 1;
 }
 
 .modal-submit:hover {
   background: var(--denim-700);
+}
+
+.modal-submit:active {
+  transform: scale(0.98);
 }
 
 .modal-success {
@@ -1252,6 +1414,18 @@ footer {
   justify-content: center;
   color: var(--n7-ink);
   font-size: 26px;
+  animation: successPulse 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@keyframes successPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .modal-success h2 {
@@ -1285,6 +1459,7 @@ footer {
   border-radius: 999px;
   font-weight: 600;
   font-size: 14px;
+  transition: all 0.2s ease-out;
 }
 
 .modal-success-close:hover {
@@ -1427,5 +1602,27 @@ body.scroll-locked {
 
   .page-content h1 {
     font-size: 54px;
+  }
+}
+
+/* ==================== SMOOTH SCROLL & SELECTION ==================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: var(--denim-500);
+  color: white;
+}
+
+/* ==================== ACCESSIBILITY: REDUCED MOTION ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
