@@ -224,6 +224,10 @@ nav.desktop-nav span {
 
 .mobile-menu {
   display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
   overflow: hidden;
   background: var(--n0-paper);
   border-bottom: 1px solid var(--n2-sand);
