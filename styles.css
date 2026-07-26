@@ -129,7 +129,7 @@ header {
   }
 
   .mobile-menu-backdrop {
-    top: 380px;
+    top: 110px;
   }
 }
 
@@ -295,7 +295,7 @@ nav.desktop-nav span {
 .mobile-menu-backdrop {
   display: none;
   position: fixed;
-  top: 400px;
+  top: 120px;
   left: 0;
   right: 0;
   bottom: 0;
