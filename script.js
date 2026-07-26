@@ -20,6 +20,7 @@ class PearseController {
     // Menu
     this.menuButton = document.querySelector('.mobile-menu-button');
     this.mobileMenu = document.querySelector('.mobile-menu');
+    this.mobileMenuBackdrop = document.querySelector('.mobile-menu-backdrop');
     this.menuLinks = this.mobileMenu.querySelectorAll('.mobile-menu-link');
     this.menuContactBtn = this.mobileMenu.querySelector('.mobile-menu-contact');
 
@@ -49,6 +50,9 @@ class PearseController {
     // Menu
     if (this.menuButton) {
       this.menuButton.addEventListener('click', () => this.toggleMenu());
+    }
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.addEventListener('click', () => this.closeMenu());
     }
     if (this.menuContactBtn) {
       this.menuContactBtn.addEventListener('click', () => {
@@ -120,12 +124,18 @@ class PearseController {
     this.menuOpen = true;
     this.menuButton.classList.add('open');
     this.mobileMenu.classList.add('open');
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.classList.add('open');
+    }
   }
 
   closeMenu() {
     this.menuOpen = false;
     this.menuButton.classList.remove('open');
     this.mobileMenu.classList.remove('open');
+    if (this.mobileMenuBackdrop) {
+      this.mobileMenuBackdrop.classList.remove('open');
+    }
   }
 
   // ==================== MODAL ====================
