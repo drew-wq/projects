@@ -644,7 +644,6 @@ section {
   padding: 36px 32px;
   transition: all 0.3s;
   border: 1px solid rgba(228, 222, 210, 0.8);
-  cursor: pointer;
   box-shadow: 0 2px 8px rgba(22, 19, 15, 0.04);
 }
 
