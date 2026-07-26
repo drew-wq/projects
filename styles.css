@@ -1293,16 +1293,16 @@ footer {
 
 .modal-error-container {
   display: none;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  background: rgba(201, 74, 38, 0.08);
-  border: 1px solid rgba(201, 74, 38, 0.2);
-  border-radius: 9px;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: #fff5f3;
+  border: 1px solid #f5cfc3;
+  border-radius: 11px;
   font-weight: 500;
   font-size: 14px;
-  color: var(--ember);
-  margin-bottom: 16px;
+  color: #b74419;
+  margin-bottom: 20px;
   line-height: 1.5;
 }
 
@@ -1316,19 +1316,18 @@ footer {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 18px;
-  height: 18px;
-  background: var(--ember);
+  width: 20px;
+  height: 20px;
+  background: #d4523d;
   color: white;
   border-radius: 50%;
   font-weight: 700;
   font-size: 12px;
   line-height: 1;
-  margin-top: 1px;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 11px 11px;
+  background-size: 12px 12px;
 }
 
 .field-error {
@@ -1337,8 +1336,8 @@ footer {
   gap: 8px;
   font-weight: 500;
   font-size: 13px;
-  color: var(--ember);
-  margin-top: 7px;
+  color: #b74419;
+  margin-top: 8px;
   min-height: 18px;
   line-height: 1.4;
 }
@@ -1356,7 +1355,7 @@ footer {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  background: var(--ember);
+  background: #d4523d;
   color: white;
   border-radius: 50%;
   font-weight: 700;
@@ -1370,8 +1369,8 @@ footer {
 
 .form-group input[aria-invalid="true"],
 .form-group textarea[aria-invalid="true"] {
-  border-color: var(--ember);
-  background: rgba(201, 74, 38, 0.05);
+  border-color: #d4523d;
+  background: #fff5f3;
 }
 
 /* ==================== SCROLL LOCK ==================== */
