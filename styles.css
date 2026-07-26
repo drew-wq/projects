@@ -276,13 +276,16 @@ nav.desktop-nav span {
   opacity: 0;
   transition: max-height 0.42s cubic-bezier(0.2, 0.7, 0.3, 1),
               opacity 0.3s,
-              border-color 0.3s;
+              border-color 0.3s,
+              box-shadow 0.3s;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0);
 }
 
 .mobile-menu.open {
   max-height: 320px;
   opacity: 1;
   border-bottom: 1px solid var(--n2-sand);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 
 .mobile-menu-content {
