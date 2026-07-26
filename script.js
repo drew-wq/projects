@@ -91,6 +91,13 @@ class PearseController {
       this.modalSuccessClose.addEventListener('click', () => this.closeModal());
     }
 
+    // Form validation
+    if (this.modalForm) {
+      this.modalForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+      this.modalForm.addEventListener('formspree:submit', () => this.handleFormspreeSubmit());
+      this.modalForm.addEventListener('formspree:errors', () => this.handleFormspreeErrors());
+    }
+
     // People cards
     if (this.edwinaCard) {
       this.edwinaCard.addEventListener('click', () => this.selectPerson('edwina'));
@@ -152,8 +159,69 @@ class PearseController {
   }
 
   // ==================== FORM ====================
-  // Form submission is handled by @formspree/ajax library
-  // No manual submission logic needed
+
+  handleFormSubmit(e) {
+    const nameInput = this.modalForm.querySelector('#form-name');
+    const emailInput = this.modalForm.querySelector('#form-email');
+    const messageInput = this.modalForm.querySelector('#form-message');
+
+    const isValid = this.validateForm(nameInput, emailInput, messageInput);
+
+    if (!isValid) {
+      e.preventDefault();
+    }
+  }
+
+  validateForm(nameInput, emailInput, messageInput) {
+    let isValid = true;
+
+    if (!nameInput.value.trim()) {
+      nameInput.setAttribute('aria-invalid', 'true');
+      const nameError = this.modalForm.querySelector('[data-fs-error="name"]');
+      nameError.textContent = 'Please enter your name';
+      isValid = false;
+    } else {
+      nameInput.removeAttribute('aria-invalid');
+      const nameError = this.modalForm.querySelector('[data-fs-error="name"]');
+      nameError.textContent = '';
+    }
+
+    if (!emailInput.value.trim()) {
+      emailInput.setAttribute('aria-invalid', 'true');
+      const emailError = this.modalForm.querySelector('[data-fs-error="email"]');
+      emailError.textContent = 'Please enter your email address';
+      isValid = false;
+    } else {
+      emailInput.removeAttribute('aria-invalid');
+      const emailError = this.modalForm.querySelector('[data-fs-error="email"]');
+      emailError.textContent = '';
+    }
+
+    if (!messageInput.value.trim()) {
+      messageInput.setAttribute('aria-invalid', 'true');
+      const messageError = this.modalForm.querySelector('[data-fs-error="message"]');
+      messageError.textContent = 'Please tell us what\'s in your way';
+      isValid = false;
+    } else {
+      messageInput.removeAttribute('aria-invalid');
+      const messageError = this.modalForm.querySelector('[data-fs-error="message"]');
+      messageError.textContent = '';
+    }
+
+    return isValid;
+  }
+
+  handleFormspreeSubmit() {
+    this.modalHeader.style.display = 'none';
+    this.modalForm.style.display = 'none';
+    this.modalSuccess.style.display = 'flex';
+  }
+
+  handleFormspreeErrors() {
+    this.modalHeader.style.display = 'block';
+    this.modalForm.style.display = 'flex';
+    this.modalSuccess.style.display = 'none';
+  }
 
   // ==================== PEOPLE CARDS ====================
 
