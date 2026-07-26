@@ -6,17 +6,28 @@
   <title>Hello World</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&family=Pacifico&family=Space+Mono&family=Merriweather&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Pacifico&family=Space+Mono&family=Merriweather&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-color: #1a1a1a;
       --text-color: #ffffff;
+      --text-secondary: #cccccc;
       --border-color: #444;
+      --focus-color: #666;
+      --control-bg: rgba(255, 255, 255, 0.08);
+      --control-hover: rgba(255, 255, 255, 0.12);
     }
     body.light-mode {
       --bg-color: #ffffff;
-      --text-color: #000000;
-      --border-color: #ccc;
+      --text-color: #1a1a1a;
+      --text-secondary: #555555;
+      --border-color: #d0d0d0;
+      --focus-color: #e8e8e8;
+      --control-bg: rgba(0, 0, 0, 0.04);
+      --control-hover: rgba(0, 0, 0, 0.08);
+    }
+    * {
+      box-sizing: border-box;
     }
     body {
       display: flex;
@@ -25,48 +36,12 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      font-family: sans-serif;
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
       background-color: var(--bg-color);
       color: var(--text-color);
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .controls {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 16px;
-      padding: 12px;
-      background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
-    }
-    body.light-mode .controls {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-    .control-row { display: flex; align-items: center; gap: 12px; }
-    select {
-      padding: 6px 10px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-    }
-    .toggle-btn {
-      padding: 6px 12px;
-      font-size: 1em;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .toggle-btn:hover {
-      opacity: 0.8;
+      transition: background-color 0.3s ease-out, color 0.3s ease-out;
+      overflow: hidden;
     }
     #particleCanvas {
       position: fixed;
@@ -79,21 +54,263 @@
     h1 {
       position: relative;
       z-index: 1;
+      margin: 0;
+      font-size: 80px;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-align: center;
+      word-break: break-word;
+      max-width: 90vw;
+      transition: font-size 0.2s ease-out, font-family 0.2s ease-out;
+    }
+    .controls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 16px;
+      padding: 16px;
+      background-color: var(--control-bg);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      z-index: 10;
+    }
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.875rem;
+    }
+    .control-label {
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+    }
+    input[type="range"] {
+      cursor: pointer;
+      width: 120px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border-color);
+      border-radius: 2px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-color);
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: var(--focus-color);
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--text-color);
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    input[type="range"]::-moz-range-thumb:hover {
+      background: var(--focus-color);
+    }
+    select {
+      padding: 8px 12px;
+      font-size: 0.875rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    select:hover {
+      background-color: var(--control-hover);
+    }
+    select:focus {
+      outline: 2px solid var(--text-color);
+      outline-offset: 2px;
+    }
+    button {
+      font-family: inherit;
+      padding: 8px 12px;
+      font-size: 0.875rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    button:hover:not(:disabled) {
+      background-color: var(--control-hover);
+    }
+    button:focus {
+      outline: 2px solid var(--text-color);
+      outline-offset: 2px;
+    }
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      animation: fadeIn 0.2s ease-out;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .modal.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background-color: var(--bg-color);
+      padding: 32px;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      max-width: 400px;
+      width: 90%;
+      border: 1px solid var(--border-color);
+      animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--text-color);
+      padding: 4px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .close-btn:hover {
+      background-color: var(--control-hover);
+    }
+    .close-btn:focus {
+      outline: 2px solid var(--text-color);
+      outline-offset: 2px;
+    }
+    .signin-option {
+      padding: 12px 16px;
+      margin: 12px 0;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      text-align: center;
+      font-size: 0.875rem;
+      cursor: not-allowed;
+      opacity: 0.6;
+      transition: all 0.2s;
+    }
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 48px;
+        max-width: 100%;
+        padding: 0 16px;
+      }
+      .controls {
+        top: 12px;
+        right: 12px;
+        padding: 12px;
+        gap: 12px;
+      }
+      .control-row {
+        gap: 8px;
+      }
+      input[type="range"] {
+        width: 80px;
+      }
+    }
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 36px;
+      }
+      .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        max-width: calc(100vw - 24px);
+      }
+      .control-row {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   </style>
 </head>
 <body>
   <canvas id="particleCanvas"></canvas>
   <h1 id="text">Hello World</h1>
-  <div class="controls">
+  <div class="controls" role="toolbar" aria-label="Text and theme controls">
     <div class="control-row">
-      <span>A</span>
-      <input type="range" id="slider" min="12" max="200" value="80">
-      <span style="font-size: 2em;">A</span>
+      <label for="fontSizeSlider" class="control-label">Size</label>
+      <input type="range" id="fontSizeSlider" min="12" max="200" value="80" aria-label="Text size">
     </div>
     <div class="control-row">
-      <select id="fontPicker">
-        <option value="Roboto">Roboto</option>
+      <label for="fontPicker" class="control-label">Font</label>
+      <select id="fontPicker" aria-label="Font selection">
         <option value="Playfair Display">Playfair Display</option>
         <option value="Pacifico">Pacifico</option>
         <option value="Space Mono" selected>Space Mono</option>
@@ -101,14 +318,29 @@
       </select>
     </div>
     <div class="control-row">
-      <button id="themeToggle" class="toggle-btn">🌙 Dark Mode</button>
+      <button id="themeToggle" aria-label="Toggle dark and light mode">🌙 Dark Mode</button>
+    </div>
+    <div class="control-row">
+      <button id="signinBtn" aria-label="Open sign in dialog">Sign In</button>
+    </div>
+  </div>
+  <div id="signinModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Sign In</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <button class="signin-option">🔵 Sign in with Google</button>
     </div>
   </div>
   <script>
     const text = document.getElementById('text');
-    const slider = document.getElementById('slider');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
     const fontPicker = document.getElementById('fontPicker');
     const themeToggle = document.getElementById('themeToggle');
+    const signinBtn = document.getElementById('signinBtn');
+    const signinModal = document.getElementById('signinModal');
+    const closeModal = document.getElementById('closeModal');
     const canvas = document.getElementById('particleCanvas');
     const ctx = canvas.getContext('2d');
 
@@ -187,21 +419,37 @@
       requestAnimationFrame(animate);
     }
 
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    document.body.classList.toggle('light-mode', savedTheme === 'light');
-    updateThemeButton();
-
-    text.style.fontSize = slider.value + 'px';
-    text.style.fontFamily = fontPicker.value;
-    slider.addEventListener('input', () => {
-      text.style.fontSize = slider.value + 'px';
-    });
-    fontPicker.addEventListener('change', () => text.style.fontFamily = fontPicker.value);
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.body.classList.toggle('light-mode', savedTheme === 'light');
+      updateThemeButton();
+    }
 
     function updateThemeButton() {
       const isLight = document.body.classList.contains('light-mode');
       themeToggle.textContent = isLight ? '☀️ Light Mode' : '🌙 Dark Mode';
     }
+
+    function initText() {
+      const savedFont = localStorage.getItem('font') || 'Space Mono';
+      const savedSize = localStorage.getItem('fontSize') || '80';
+      text.style.fontSize = savedSize + 'px';
+      text.style.fontFamily = savedFont;
+      fontPicker.value = savedFont;
+      fontSizeSlider.value = savedSize;
+    }
+
+    fontSizeSlider.addEventListener('input', (e) => {
+      const size = e.target.value;
+      text.style.fontSize = size + 'px';
+      localStorage.setItem('fontSize', size);
+    });
+
+    fontPicker.addEventListener('change', (e) => {
+      const font = e.target.value;
+      text.style.fontFamily = font;
+      localStorage.setItem('font', font);
+    });
 
     themeToggle.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
@@ -215,6 +463,33 @@
       canvas.height = window.innerHeight;
     });
 
+    function openModal() {
+      signinModal.classList.add('open');
+      closeModal.focus();
+    }
+
+    function closeSigninModal() {
+      signinModal.classList.remove('open');
+      signinBtn.focus();
+    }
+
+    signinBtn.addEventListener('click', openModal);
+    closeModal.addEventListener('click', closeSigninModal);
+
+    signinModal.addEventListener('click', (e) => {
+      if (e.target === signinModal) {
+        closeSigninModal();
+      }
+    });
+
+    signinModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeSigninModal();
+      }
+    });
+
+    initTheme();
+    initText();
     initParticles();
     animate();
   </script>
