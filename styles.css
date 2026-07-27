@@ -1531,6 +1531,14 @@ footer {
   color: var(--ember) !important;
   margin-bottom: 20px !important;
   line-height: 1.5 !important;
+  box-shadow: none !important;
+}
+
+.modal-error-container[style] {
+  background: rgba(201, 74, 38, 0.08) !important;
+  border: 2px solid var(--ember) !important;
+  color: var(--ember) !important;
+  box-shadow: none !important;
 }
 
 .modal-error-container:not(:empty) {

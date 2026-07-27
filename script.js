@@ -108,6 +108,9 @@ class PearseController {
       this.modalForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
       this.modalForm.addEventListener('formspree:submit', () => this.handleFormspreeSubmit());
       this.modalForm.addEventListener('formspree:errors', () => this.handleFormspreeErrors());
+
+      // Watch for Formspree inline style changes on error container
+      this.watchErrorContainerStyles();
     }
 
     // People cards
@@ -239,6 +242,33 @@ class PearseController {
     this.modalHeader.style.display = 'block';
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
+
+    // Remove inline styles from Formspree error container to apply our CSS
+    this.cleanErrorContainerStyles();
+  }
+
+  cleanErrorContainerStyles() {
+    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
+    if (errorContainer && errorContainer.getAttribute('style')) {
+      // Remove all inline styles
+      errorContainer.removeAttribute('style');
+    }
+  }
+
+  watchErrorContainerStyles() {
+    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
+    if (!errorContainer) return;
+
+    // Use MutationObserver to watch for inline style changes by Formspree
+    const observer = new MutationObserver(() => {
+      this.cleanErrorContainerStyles();
+    });
+
+    observer.observe(errorContainer, {
+      attributes: true,
+      attributeFilter: ['style'],
+      subtree: false
+    });
   }
 
   // ==================== PEOPLE CARDS ====================
