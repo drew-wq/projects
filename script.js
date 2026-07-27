@@ -40,6 +40,8 @@ class PearseController {
     this.modalSuccess = this.modalContent.querySelector('.modal-success');
     this.modalHeader = this.modalContent.querySelector('.modal-header');
     this.modalSuccessClose = this.modalSuccess?.querySelector('.modal-success-close');
+    // Note: the error container is a sibling of the form, not inside it
+    this.errorContainer = this.modalContent.querySelector('.modal-error-container');
 
     // Contact buttons
     this.navContactBtn = document.querySelector('.nav-button');
@@ -105,7 +107,12 @@ class PearseController {
 
     // Form validation
     if (this.modalForm) {
-      this.modalForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+      // Validate in the capture phase on document so an invalid submit is
+      // stopped before Formspree's own submit listener (which clears our
+      // aria-invalid markers and would fire a doomed request) can run
+      document.addEventListener('submit', (e) => {
+        if (e.target === this.modalForm) this.handleFormSubmit(e);
+      }, true);
       this.modalForm.addEventListener('formspree:submit', () => this.handleFormspreeSubmit());
       this.modalForm.addEventListener('formspree:errors', () => this.handleFormspreeErrors());
 
@@ -114,9 +121,6 @@ class PearseController {
       inputs.forEach(input => {
         input.addEventListener('input', () => this.clearFieldError(input));
       });
-
-      // Watch for Formspree inline style changes on error container
-      this.watchErrorContainerStyles();
     }
 
     // People cards
@@ -183,15 +187,22 @@ class PearseController {
       input.removeAttribute('aria-invalid');
     });
 
-    // Clear error messages
-    const errorSpans = this.modalForm.querySelectorAll('[data-fs-error]');
-    errorSpans.forEach(span => span.textContent = '');
+    // Clear field error messages
+    const errorSpans = this.modalForm.querySelectorAll('.field-error');
+    errorSpans.forEach(span => {
+      span.textContent = '';
+      span.classList.remove('visible');
+    });
 
-    // Clear main error container (CSS will hide it via :not(:empty) selector)
-    const errorContainer = document.querySelector('.modal-error-container');
-    if (errorContainer) {
-      errorContainer.textContent = '';
-    }
+    this.hideErrorContainer();
+  }
+
+  hideErrorContainer() {
+    if (!this.errorContainer) return;
+    this.errorContainer.textContent = '';
+    this.errorContainer.classList.remove('visible');
+    // Drop any inline styles the Formspree script may have injected
+    this.errorContainer.removeAttribute('style');
   }
 
   closeModal() {
@@ -211,17 +222,14 @@ class PearseController {
 
     if (!isValid) {
       e.preventDefault();
+      e.stopPropagation();
     }
   }
 
   validateForm(nameInput, emailInput, messageInput) {
     let isValid = true;
 
-    // Clear main error container (CSS will hide it via :not(:empty) selector)
-    const errorContainer = document.querySelector('.modal-error-container');
-    if (errorContainer) {
-      errorContainer.textContent = '';
-    }
+    this.hideErrorContainer();
 
     // Validate name
     if (!nameInput.value.trim()) {
@@ -263,6 +271,7 @@ class PearseController {
     const errorSpan = this.modalForm.querySelector(`[data-fs-error="${fieldName}"]`);
     if (errorSpan) {
       errorSpan.textContent = message;
+      errorSpan.classList.add('visible');
     }
   }
 
@@ -272,6 +281,7 @@ class PearseController {
     const errorSpan = this.modalForm.querySelector(`[data-fs-error="${fieldName}"]`);
     if (errorSpan) {
       errorSpan.textContent = '';
+      errorSpan.classList.remove('visible');
     }
   }
 
@@ -285,12 +295,13 @@ class PearseController {
     this.modalHeader.style.display = 'block';
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
-    // Error container visibility is handled by CSS :not(:empty) selector
-  }
 
-  watchErrorContainerStyles() {
-    // Error container display is now handled entirely by CSS :not(:empty) selector
-    // This method is kept for potential future use but not actively needed
+    // Formspree has written a server error into the container; show it with
+    // our styling instead of whatever inline styles the library injected
+    if (this.errorContainer && this.errorContainer.textContent.trim()) {
+      this.errorContainer.removeAttribute('style');
+      this.errorContainer.classList.add('visible');
+    }
   }
 
   // ==================== PEOPLE CARDS ====================

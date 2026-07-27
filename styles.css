@@ -1519,66 +1519,55 @@ footer {
   background: var(--n5-taupe);
 }
 
+/* Error visibility is driven by a single mechanism: the .visible class,
+   toggled only by script.js. */
+
 .modal-error-container {
+  align-items: flex-start;
+  padding: 14px 16px;
+  background: rgba(201, 74, 38, 0.08);
+  border: 2px solid var(--ember);
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ember);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* The hidden state must survive inline styles the Formspree script injects */
+.modal-error-container:not(.visible) {
   display: none !important;
-  align-items: flex-start !important;
-  padding: 14px 16px !important;
-  background: rgba(201, 74, 38, 0.08) !important;
-  border: 2px solid var(--ember) !important;
-  border-radius: 12px !important;
-  font-weight: 500 !important;
-  font-size: 13px !important;
-  color: var(--ember) !important;
-  margin-bottom: 20px !important;
-  line-height: 1.5 !important;
-  box-shadow: none !important;
 }
 
-.modal-error-container[style] {
-  background: rgba(201, 74, 38, 0.08) !important;
-  border: 2px solid var(--ember) !important;
-  color: var(--ember) !important;
-  box-shadow: none !important;
-}
-
-.modal-error-container:not(:empty) {
-  display: flex !important;
-}
-
-.modal-error-container {
-  background: rgba(201, 74, 38, 0.08) !important;
-  border: 2px solid var(--ember) !important;
-  color: var(--ember) !important;
-}
-
-.modal-error-container * {
-  color: var(--ember) !important;
+.modal-error-container.visible {
+  display: flex;
 }
 
 .modal-error-container p,
 .modal-error-container div,
 .modal-error-container span {
-  color: var(--ember) !important;
+  color: var(--ember);
+  margin: 0;
 }
 
 .field-error {
-  display: none !important;
-  font-weight: 500 !important;
-  font-size: 12px !important;
-  color: var(--ember) !important;
-  margin-top: 8px !important;
-  min-height: 18px !important;
-  line-height: 1.4 !important;
+  display: none;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--ember);
+  margin-top: 8px;
+  line-height: 1.4;
 }
 
-.field-error:not(:empty) {
-  display: flex !important;
+.field-error.visible {
+  display: block;
 }
 
 .form-group input[aria-invalid="true"],
 .form-group textarea[aria-invalid="true"] {
-  border-color: var(--ember) !important;
-  background: rgba(201, 74, 38, 0.04) !important;
+  border-color: var(--ember);
+  background: rgba(201, 74, 38, 0.04);
 }
 
 /* ==================== SCROLL LOCK ==================== */
