@@ -113,8 +113,6 @@ class PearseController {
       document.addEventListener('submit', (e) => {
         if (e.target === this.modalForm) this.handleFormSubmit(e);
       }, true);
-      this.modalForm.addEventListener('formspree:submit', () => this.handleFormspreeSubmit());
-      this.modalForm.addEventListener('formspree:errors', () => this.handleFormspreeErrors());
 
       // Add input listeners to clear errors as user types
       const inputs = this.modalForm.querySelectorAll('input, textarea');
@@ -164,9 +162,7 @@ class PearseController {
   openModal() {
     this.modalOpen = true;
     this.modalOverlay.classList.add('open');
-    this.modalHeader.style.display = 'block';
-    this.modalForm.style.display = 'flex';
-    this.modalSuccess.style.display = 'none';
+    this.showFormView();
     document.body.classList.add('scroll-locked');
 
     // Reset form and clear all error states
@@ -285,23 +281,86 @@ class PearseController {
     }
   }
 
-  handleFormspreeSubmit() {
-    this.modalHeader.style.display = 'none';
-    this.modalForm.style.display = 'none';
-    this.modalSuccess.style.display = 'flex';
+  prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }
 
-  handleFormspreeErrors() {
+  // Returns the card to the form view and clears any in-flight transition state
+  showFormView() {
+    this.modalContent.classList.remove('is-leaving', 'is-morphing');
+    this.modalContent.style.height = '';
+    this.modalContent.style.overflow = '';
     this.modalHeader.style.display = 'block';
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
+  }
 
-    // Formspree has written a server error into the container; show it with
-    // our styling instead of whatever inline styles the library injected
-    if (this.errorContainer && this.errorContainer.textContent.trim()) {
-      this.errorContainer.removeAttribute('style');
-      this.errorContainer.classList.add('visible');
+  // Called only from Formspree's onSuccess, i.e. after the server has
+  // confirmed the submission. The form lifts away, the card morphs to the
+  // new height, and the plane launches.
+  showSuccess() {
+    if (this.prefersReducedMotion()) {
+      this.swapToSuccess();
+      return;
     }
+    this.modalContent.classList.add('is-leaving');
+    setTimeout(() => this.swapToSuccess(), 160);
+  }
+
+  swapToSuccess() {
+    const card = this.modalContent;
+    const startHeight = card.offsetHeight;
+
+    this.hideErrorContainer();
+    this.modalForm.reset();
+
+    card.classList.remove('is-leaving');
+    this.modalHeader.style.display = 'none';
+    this.modalForm.style.display = 'none';
+    this.modalSuccess.style.display = 'flex';
+
+    this.morphHeight(card, startHeight, card.offsetHeight);
+    this.modalSuccess.focus({ preventScroll: true });
+  }
+
+  morphHeight(card, from, to) {
+    if (from === to || this.prefersReducedMotion()) return;
+
+    card.style.height = from + 'px';
+    card.style.overflow = 'hidden';
+    void card.offsetHeight; // commit the start height before transitioning
+    card.classList.add('is-morphing');
+    card.style.height = to + 'px';
+
+    const settle = () => {
+      card.classList.remove('is-morphing');
+      card.style.height = '';
+      card.style.overflow = '';
+    };
+    card.addEventListener('transitionend', settle, { once: true });
+    // transitionend is missed if the modal closes mid-morph
+    setTimeout(settle, 600);
+  }
+
+  // Formspree writes its messages into our containers but our stylesheet only
+  // reveals them once .visible is set. An explicit message overrides the
+  // library's wording for network failures.
+  showServerError(message) {
+    this.showFormView();
+
+    if (this.errorContainer) {
+      this.errorContainer.removeAttribute('style');
+      if (message) this.errorContainer.textContent = message;
+      this.errorContainer.classList.toggle(
+        'visible',
+        this.errorContainer.textContent.trim() !== ''
+      );
+    }
+
+    this.modalForm.querySelectorAll('.field-error').forEach((span) => {
+      span.removeAttribute('style');
+      span.classList.toggle('visible', span.textContent.trim() !== '');
+    });
   }
 
   // ==================== PEOPLE CARDS ====================
@@ -339,11 +398,51 @@ class PearseController {
   }
 }
 
+let controller = null;
+
+// @formspree/ajax dispatches no DOM events; the success and error paths are
+// config callbacks. onSuccess runs only once the server has confirmed the
+// submission, so it is the only thing that reveals the success view.
+function initFormspree() {
+  if (!document.querySelector('#contactForm')) return;
+
+  window.formspree = window.formspree || function () {
+    (window.formspree.q = window.formspree.q || []).push(arguments);
+  };
+
+  window.formspree('initForm', {
+    formElement: '#contactForm',
+    formId: 'mnjebyyg',
+    // Without this the library injects a stylesheet after ours that wins on
+    // equal specificity, repainting our error text in its own red.
+    useDefaultStyles: false,
+    // The library's own success renderer paints a default green panel over
+    // our markup; this view is entirely ours, so it stays a no-op.
+    renderSuccess: function () {},
+    onSuccess: function () {
+      if (controller) controller.showSuccess();
+    },
+    onError: function () {
+      if (controller) controller.showServerError(null);
+    },
+    onFailure: function () {
+      if (controller) {
+        controller.showServerError(
+          'We couldn’t reach our inbox just then. Check your connection and send it again, or email hello@pearse.co.'
+        );
+      }
+    }
+  });
+}
+
+function boot() {
+  controller = new PearseController();
+  initFormspree();
+}
+
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    new PearseController();
-  });
+  document.addEventListener('DOMContentLoaded', boot);
 } else {
-  new PearseController();
+  boot();
 }

@@ -1451,44 +1451,200 @@ footer {
   transform: scale(0.98);
 }
 
-.modal-success {
-  text-align: center;
-  padding: 20px 6px;
+/* Submitting: Formspree sets aria-busy on the form and disables the button.
+   The label is a bare text node, so it is hidden with colour, not visibility. */
+.modal-form[aria-busy="true"] .modal-submit {
+  color: transparent;
+  cursor: progress;
+  background: var(--denim-500);
+  box-shadow: none;
 }
 
-.modal-success-icon {
-  width: 56px;
-  height: 56px;
-  margin: 0 auto 18px;
-  border-radius: 50%;
-  background: var(--sage);
+.modal-form[aria-busy="true"] .modal-submit::after {
+  content: 'Sending…';
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--n7-ink);
-  font-size: 26px;
-  animation: successPulse 0.5s cubic-bezier(0.2, 0.7, 0.3, 1);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
 }
 
-@keyframes successPulse {
-  0% {
-    transform: scale(0.8);
-    opacity: 0;
+.modal-submit:disabled:hover {
+  background: var(--denim-500);
+  box-shadow: none;
+}
+
+.modal-submit:disabled:hover::before {
+  opacity: 0;
+}
+
+/* ==================== MODAL SUCCESS: AWAY IT GOES ==================== */
+
+/* The form and success view swap inside one card: the outgoing content lifts
+   away, the card morphs to its new height, then the plane launches. */
+.modal-content.is-leaving .modal-header,
+.modal-content.is-leaving .modal-form {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease-out, transform 0.16s ease-out;
+}
+
+/* Height is a layout property, animated here deliberately: the card has to
+   morph between two measured content heights, and no transform can do that
+   without distorting its contents. It is one 420ms transition on one small
+   element, scoped by a class that script.js removes as soon as it settles. */
+.modal-content.is-morphing {
+  transition: height 0.42s cubic-bezier(0.2, 0.7, 0.3, 1);
+  will-change: height;
+  contain: layout;
+}
+
+.modal-success {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 18px 0 4px;
+}
+
+/* Focus moves here so screen readers read the confirmation, but the panel is
+   a container, not a control: the Close button carries the visible ring. */
+.modal-success:focus,
+.modal-success:focus-visible {
+  outline: none;
+}
+
+/* Full-bleed to the card edges; the negative margins mirror .modal-content */
+.success-sky {
+  position: relative;
+  align-self: stretch;
+  height: 132px;
+  margin: 0 -22px 4px;
+}
+
+@media (min-width: 680px) {
+  .success-sky {
+    margin: 0 -32px 4px;
   }
-  100% {
-    transform: scale(1);
+}
+
+.success-trail {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--denim-300);
+  /* The mask grows with the plane so the dashes stay put and the trail is
+     drawn behind it, rather than marching along the path. */
+  -webkit-mask-image: linear-gradient(90deg, #000 0 100%);
+  mask-image: linear-gradient(90deg, #000 0 100%);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: left center;
+  mask-position: left center;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  animation: trailDraw 1.35s linear both;
+}
+
+.success-trail path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 3 9;
+}
+
+.success-plane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 0;
+  animation: planeGlideX 1.35s linear both;
+}
+
+.success-plane-inner {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  color: var(--denim-700);
+  animation: planeGlideY 1.35s linear both, planeFade 1.35s linear both;
+}
+
+.success-plane-inner svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* X and Y are separate animations sharing the same keyframe stops, so the
+   plane sits on the trail at every moment while the arc stays responsive. */
+@keyframes planeGlideX {
+  0%   { transform: translateX(3.4%); }
+  12%  { transform: translateX(17.6%); }
+  30%  { transform: translateX(36.5%); }
+  55%  { transform: translateX(60.2%); }
+  78%  { transform: translateX(79.1%); }
+  100% { transform: translateX(97.1%); }
+}
+
+@keyframes planeGlideY {
+  0%   { transform: translateY(96px) rotate(6deg) scale(1); }
+  12%  { transform: translateY(104px) rotate(0deg) scale(1); }
+  30%  { transform: translateY(88px) rotate(-14deg) scale(0.97); }
+  55%  { transform: translateY(56px) rotate(-20deg) scale(0.93); }
+  78%  { transform: translateY(28px) rotate(-24deg) scale(0.88); }
+  100% { transform: translateY(12px) rotate(-26deg) scale(0.82); }
+}
+
+@keyframes planeFade {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  70%  { opacity: 1; }
+  92%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes trailDraw {
+  0%   { -webkit-mask-size: 3.4% 100%; mask-size: 3.4% 100%; }
+  12%  { -webkit-mask-size: 17.6% 100%; mask-size: 17.6% 100%; }
+  30%  { -webkit-mask-size: 36.5% 100%; mask-size: 36.5% 100%; }
+  55%  { -webkit-mask-size: 60.2% 100%; mask-size: 60.2% 100%; }
+  78%  { -webkit-mask-size: 79.1% 100%; mask-size: 79.1% 100%; }
+  100% { -webkit-mask-size: 100% 100%; mask-size: 100% 100%; }
+}
+
+.success-copy {
+  animation: successCopy 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) 0.3s both;
+}
+
+@keyframes successCopy {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
     opacity: 1;
+    transform: none;
   }
 }
 
 .modal-success h2 {
   margin: 0 0 8px;
   font-weight: 700;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.1;
   font-family: var(--font-display);
   letter-spacing: -0.02em;
   color: var(--denim-900);
+  text-wrap: balance;
 }
 
 .modal-success .colon {
@@ -1496,7 +1652,9 @@ footer {
 }
 
 .modal-success p {
-  margin: 0 0 22px;
+  margin: 0 auto 22px;
+  max-width: 34ch;
+  text-wrap: pretty;
   font-weight: 400;
   font-size: 15px;
   line-height: 1.55;
@@ -1517,6 +1675,31 @@ footer {
 
 .modal-success-close:hover {
   background: var(--n5-taupe);
+}
+
+/* No flight: the trail is already drawn and the plane rests at its end. */
+@media (prefers-reduced-motion: reduce) {
+  .modal-content.is-leaving .modal-header,
+  .modal-content.is-leaving .modal-form,
+  .modal-content.is-morphing,
+  .success-copy {
+    transition: none;
+    animation: none;
+  }
+
+  .success-trail,
+  .success-plane,
+  .success-plane-inner {
+    animation: none;
+  }
+
+  .success-plane {
+    transform: translateX(79.1%);
+  }
+
+  .success-plane-inner {
+    transform: translateY(28px) rotate(-24deg) scale(0.88);
+  }
 }
 
 /* Error visibility is driven by a single mechanism: the .visible class,

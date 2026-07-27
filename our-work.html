@@ -125,20 +125,30 @@
     </form>
 
     <!-- Success View -->
-    <div class="modal-success" data-fs-success style="display: none;">
-      <div class="modal-success-icon">✓</div>
-      <h2>Thanks — we're on it<span class="colon">:</span></h2>
-      <p>One of us will be in touch within a day.</p>
-      <button class="modal-success-close">Close</button>
+    <div class="modal-success" data-fs-success role="status" aria-live="polite" tabindex="-1" style="display: none;">
+      <div class="success-sky" aria-hidden="true">
+        <svg class="success-trail" viewBox="0 0 412 132" preserveAspectRatio="none" focusable="false">
+          <path vector-effect="non-scaling-stroke" d="M14 96C38 103 52 105 72 104C100 103 128 97 150 88C182 75 216 68 248 56C274 46 302 38 326 28C352 18 378 17 400 12"/>
+        </svg>
+        <span class="success-plane">
+          <span class="success-plane-inner">
+            <svg viewBox="0 0 24 24" fill="currentColor" focusable="false">
+              <path d="M23 12 2 4l3.4 8z" opacity=".55"/>
+              <path d="M23 12 2 20l3.4-8z"/>
+            </svg>
+          </span>
+        </span>
+      </div>
+      <div class="success-copy">
+        <h2>Away it goes<span class="colon">:</span></h2>
+        <p>Straight to Edwina and Drew. A reply within a day — we don't leave people hanging.</p>
+        <button type="button" class="modal-success-close">Close</button>
+      </div>
     </div>
   </div>
 </div>
 
 <script src="./script.js" defer></script>
-<script>
-  window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
-  formspree('initForm', { formElement: '#contactForm', formId: 'mnjebyyg' });
-</script>
 <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 
 </body>
