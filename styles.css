@@ -1327,14 +1327,30 @@ footer {
   right: 16px;
   width: 34px;
   height: 34px;
+  padding: 0;
   border: none;
   border-radius: 50%;
   background: var(--n1-bone);
-  color: var(--n7-ink);
-  font-size: 18px;
-  line-height: 1;
   cursor: pointer;
   transition: all 0.2s ease-out;
+}
+
+.modal-close span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 2px;
+  background: var(--n7-ink);
+  border-radius: 1px;
+}
+
+.modal-close span:first-child {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modal-close span:last-child {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .modal-close:hover {
