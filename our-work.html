@@ -136,5 +136,48 @@
 
 <script src="./script.js" defer></script>
 
+<!-- Override any competing styles from external libraries -->
+<style>
+  .modal-error-container {
+    background: rgba(201, 74, 38, 0.08) !important;
+    border: 2px solid #c94a26 !important;
+    border-radius: 12px !important;
+    color: #c94a26 !important;
+    padding: 14px 16px !important;
+    margin-bottom: 20px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    box-shadow: none !important;
+  }
+
+  .modal-error-container * {
+    color: #c94a26 !important;
+  }
+
+  .modal-error-container p,
+  .modal-error-container div,
+  .modal-error-container span {
+    color: #c94a26 !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+  }
+
+  .field-error {
+    color: #c94a26 !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    margin-top: 8px !important;
+  }
+
+  .form-group input[aria-invalid="true"],
+  .form-group textarea[aria-invalid="true"] {
+    border-color: #c94a26 !important;
+    background: rgba(201, 74, 38, 0.04) !important;
+  }
+</style>
+
 </body>
 </html>

@@ -1545,6 +1545,22 @@ footer {
   display: flex !important;
 }
 
+.modal-error-container {
+  background: rgba(201, 74, 38, 0.08) !important;
+  border: 2px solid var(--ember) !important;
+  color: var(--ember) !important;
+}
+
+.modal-error-container * {
+  color: var(--ember) !important;
+}
+
+.modal-error-container p,
+.modal-error-container div,
+.modal-error-container span {
+  color: var(--ember) !important;
+}
+
 .field-error {
   display: none !important;
   font-weight: 500 !important;

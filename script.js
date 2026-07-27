@@ -243,23 +243,44 @@ class PearseController {
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
 
-    // Remove inline styles from Formspree error container to apply our CSS
+    // Remove inline styles from Formspree error container and apply our CSS
     this.cleanErrorContainerStyles();
+
+    // Also ensure field errors are styled correctly
+    setTimeout(() => {
+      this.cleanErrorContainerStyles();
+    }, 50);
   }
 
   cleanErrorContainerStyles() {
     const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
-    if (errorContainer && errorContainer.getAttribute('style')) {
-      // Remove all inline styles
-      errorContainer.removeAttribute('style');
-    }
+    if (!errorContainer) return;
+
+    // Remove inline styles
+    errorContainer.removeAttribute('style');
+
+    // Apply our custom styles directly via JavaScript to override anything
+    errorContainer.style.cssText = `
+      display: flex !important;
+      align-items: flex-start !important;
+      padding: 14px 16px !important;
+      background: rgba(201, 74, 38, 0.08) !important;
+      border: 2px solid #c94a26 !important;
+      border-radius: 12px !important;
+      font-weight: 500 !important;
+      font-size: 13px !important;
+      color: #c94a26 !important;
+      margin-bottom: 20px !important;
+      line-height: 1.5 !important;
+      box-shadow: none !important;
+    `;
   }
 
   watchErrorContainerStyles() {
     const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
     if (!errorContainer) return;
 
-    // Use MutationObserver to watch for inline style changes by Formspree
+    // Use MutationObserver to watch for style changes by Formspree
     const observer = new MutationObserver(() => {
       this.cleanErrorContainerStyles();
     });
@@ -268,6 +289,16 @@ class PearseController {
       attributes: true,
       attributeFilter: ['style'],
       subtree: false
+    });
+
+    // Also watch the modal-form for changes
+    const formObserver = new MutationObserver(() => {
+      this.cleanErrorContainerStyles();
+    });
+
+    formObserver.observe(this.modalForm, {
+      childList: true,
+      subtree: true
     });
   }
 
