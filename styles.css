@@ -1507,7 +1507,9 @@ footer {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 18px 0 4px;
+  /* Top pad clears the close button; bottom pad balances the whitespace
+     above the trail ink, so the composition sits optically centred. */
+  padding: 14px 0 36px;
 }
 
 /* Focus moves here so screen readers read the confirmation, but the panel is
@@ -1518,9 +1520,13 @@ footer {
 }
 
 /* Full-bleed to the card edges; the negative margins mirror .modal-content */
+/* Height is load-bearing: the SVG maps 132 viewBox units to 132px, which is
+   what keeps the plane's pixel keyframes sitting on the trail. It must never
+   be shrunk by the flex column on a short viewport — the card scrolls instead. */
 .success-sky {
   position: relative;
   align-self: stretch;
+  flex-shrink: 0;
   height: 132px;
   margin: 0 -22px 4px;
 }
@@ -1592,7 +1598,7 @@ footer {
   30%  { transform: translateX(36.5%); }
   55%  { transform: translateX(60.2%); }
   78%  { transform: translateX(79.1%); }
-  100% { transform: translateX(97.1%); }
+  100% { transform: translateX(96.6%); }
 }
 
 @keyframes planeGlideY {
