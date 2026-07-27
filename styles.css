@@ -1400,6 +1400,11 @@ footer {
   color: var(--denim-700);
 }
 
+.required-mark {
+  color: var(--ember);
+  margin-left: 2px;
+}
+
 .form-group input,
 .form-group textarea {
   padding: 13px 15px;
