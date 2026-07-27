@@ -109,6 +109,12 @@ class PearseController {
       this.modalForm.addEventListener('formspree:submit', () => this.handleFormspreeSubmit());
       this.modalForm.addEventListener('formspree:errors', () => this.handleFormspreeErrors());
 
+      // Add input listeners to clear errors as user types
+      const inputs = this.modalForm.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => this.clearFieldError(input));
+      });
+
       // Watch for Formspree inline style changes on error container
       this.watchErrorContainerStyles();
     }
@@ -158,19 +164,34 @@ class PearseController {
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
     document.body.classList.add('scroll-locked');
-    // Reset form
-    const inputs = this.modalForm.querySelectorAll('input, textarea');
-    inputs.forEach(input => input.value = '');
-    // Clear field errors
-    const errorSpans = this.modalForm.querySelectorAll('[data-fs-error]');
-    errorSpans.forEach(span => span.textContent = '');
-    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
-    if (errorContainer) errorContainer.textContent = '';
+
+    // Reset form and clear all error states
+    this.resetFormState();
+
     // Focus trap: focus first input
     setTimeout(() => {
       const firstInput = this.modalForm.querySelector('input');
       if (firstInput) firstInput.focus();
     }, 100);
+  }
+
+  resetFormState() {
+    // Clear input values
+    const inputs = this.modalForm.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.value = '';
+      input.removeAttribute('aria-invalid');
+    });
+
+    // Clear error messages
+    const errorSpans = this.modalForm.querySelectorAll('[data-fs-error]');
+    errorSpans.forEach(span => span.textContent = '');
+
+    // Clear main error container (CSS will hide it via :not(:empty) selector)
+    const errorContainer = document.querySelector('.modal-error-container');
+    if (errorContainer) {
+      errorContainer.textContent = '';
+    }
   }
 
   closeModal() {
@@ -196,40 +217,62 @@ class PearseController {
   validateForm(nameInput, emailInput, messageInput) {
     let isValid = true;
 
+    // Clear main error container (CSS will hide it via :not(:empty) selector)
+    const errorContainer = document.querySelector('.modal-error-container');
+    if (errorContainer) {
+      errorContainer.textContent = '';
+    }
+
+    // Validate name
     if (!nameInput.value.trim()) {
-      nameInput.setAttribute('aria-invalid', 'true');
-      const nameError = this.modalForm.querySelector('[data-fs-error="name"]');
-      nameError.textContent = 'Please enter your name';
+      this.setFieldError(nameInput, 'name', 'Please enter your name');
       isValid = false;
     } else {
-      nameInput.removeAttribute('aria-invalid');
-      const nameError = this.modalForm.querySelector('[data-fs-error="name"]');
-      nameError.textContent = '';
+      this.clearFieldError(nameInput);
     }
 
+    // Validate email
     if (!emailInput.value.trim()) {
-      emailInput.setAttribute('aria-invalid', 'true');
-      const emailError = this.modalForm.querySelector('[data-fs-error="email"]');
-      emailError.textContent = 'Please enter your email address';
+      this.setFieldError(emailInput, 'email', 'Please enter your email address');
+      isValid = false;
+    } else if (!this.isValidEmail(emailInput.value)) {
+      this.setFieldError(emailInput, 'email', 'Please enter a valid email address');
       isValid = false;
     } else {
-      emailInput.removeAttribute('aria-invalid');
-      const emailError = this.modalForm.querySelector('[data-fs-error="email"]');
-      emailError.textContent = '';
+      this.clearFieldError(emailInput);
     }
 
+    // Validate message
     if (!messageInput.value.trim()) {
-      messageInput.setAttribute('aria-invalid', 'true');
-      const messageError = this.modalForm.querySelector('[data-fs-error="message"]');
-      messageError.textContent = 'Please tell us what\'s in your way';
+      this.setFieldError(messageInput, 'message', 'Please tell us what\'s in your way');
       isValid = false;
     } else {
-      messageInput.removeAttribute('aria-invalid');
-      const messageError = this.modalForm.querySelector('[data-fs-error="message"]');
-      messageError.textContent = '';
+      this.clearFieldError(messageInput);
     }
 
     return isValid;
+  }
+
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  setFieldError(input, fieldName, message) {
+    input.setAttribute('aria-invalid', 'true');
+    const errorSpan = this.modalForm.querySelector(`[data-fs-error="${fieldName}"]`);
+    if (errorSpan) {
+      errorSpan.textContent = message;
+    }
+  }
+
+  clearFieldError(input) {
+    const fieldName = input.getAttribute('name');
+    input.removeAttribute('aria-invalid');
+    const errorSpan = this.modalForm.querySelector(`[data-fs-error="${fieldName}"]`);
+    if (errorSpan) {
+      errorSpan.textContent = '';
+    }
   }
 
   handleFormspreeSubmit() {
@@ -242,64 +285,12 @@ class PearseController {
     this.modalHeader.style.display = 'block';
     this.modalForm.style.display = 'flex';
     this.modalSuccess.style.display = 'none';
-
-    // Remove inline styles from Formspree error container and apply our CSS
-    this.cleanErrorContainerStyles();
-
-    // Also ensure field errors are styled correctly
-    setTimeout(() => {
-      this.cleanErrorContainerStyles();
-    }, 50);
-  }
-
-  cleanErrorContainerStyles() {
-    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
-    if (!errorContainer) return;
-
-    // Remove inline styles
-    errorContainer.removeAttribute('style');
-
-    // Apply our custom styles directly via JavaScript to override anything
-    errorContainer.style.cssText = `
-      display: flex !important;
-      align-items: flex-start !important;
-      padding: 14px 16px !important;
-      background: rgba(201, 74, 38, 0.08) !important;
-      border: 2px solid #c94a26 !important;
-      border-radius: 12px !important;
-      font-weight: 500 !important;
-      font-size: 13px !important;
-      color: #c94a26 !important;
-      margin-bottom: 20px !important;
-      line-height: 1.5 !important;
-      box-shadow: none !important;
-    `;
+    // Error container visibility is handled by CSS :not(:empty) selector
   }
 
   watchErrorContainerStyles() {
-    const errorContainer = this.modalForm.querySelector('[data-fs-error=""]');
-    if (!errorContainer) return;
-
-    // Use MutationObserver to watch for style changes by Formspree
-    const observer = new MutationObserver(() => {
-      this.cleanErrorContainerStyles();
-    });
-
-    observer.observe(errorContainer, {
-      attributes: true,
-      attributeFilter: ['style'],
-      subtree: false
-    });
-
-    // Also watch the modal-form for changes
-    const formObserver = new MutationObserver(() => {
-      this.cleanErrorContainerStyles();
-    });
-
-    formObserver.observe(this.modalForm, {
-      childList: true,
-      subtree: true
-    });
+    // Error container display is now handled entirely by CSS :not(:empty) selector
+    // This method is kept for potential future use but not actively needed
   }
 
   // ==================== PEOPLE CARDS ====================
