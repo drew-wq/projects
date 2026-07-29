@@ -525,6 +525,27 @@ class AboutPage {
     if (!this.partners.length) return;
 
     const reduced = this.prefersReducedMotion();
+    const asides = this.partners
+      .map((section) => section.querySelector('.partner-aside'))
+      .filter(Boolean);
+
+    // Read the sticky offset back off the stylesheet rather than duplicating
+    // it here — custom properties resolve even while the element is
+    // `position: static`, so this stays correct in both states
+    const offset = asides.length
+      ? parseFloat(
+        window.getComputedStyle(asides[0]).getPropertyValue('--pin-offset')
+      ) || 0
+      : 0;
+
+    // A column taller than the space under the header cannot hold without
+    // clipping, so let it scroll normally instead. The call is made once for
+    // the page off the tallest column: decided per section, a few pixels of
+    // difference between two partners' cards is enough to pin one and not the
+    // other at the same viewport, which reads as a bug rather than a fallback.
+    const tallest = asides.reduce((max, aside) => Math.max(max, aside.offsetHeight), 0);
+    const canPin = tallest + offset <= window.innerHeight;
+    asides.forEach((aside) => aside.classList.toggle('no-pin', !canPin));
 
     this.partners.forEach((section) => {
       const aside = section.querySelector('.partner-aside');
@@ -534,17 +555,6 @@ class AboutPage {
       const box = section.getBoundingClientRect();
 
       if (aside && card && fill) {
-        // Read the sticky offset back off the stylesheet rather than
-        // duplicating it here — custom properties resolve even while the
-        // element is `position: static`, so this stays correct in both states
-        const offset = parseFloat(
-          window.getComputedStyle(aside).getPropertyValue('--pin-offset')
-        ) || 0;
-
-        // A column taller than the space under the header cannot hold
-        // without clipping, so let it scroll normally instead
-        aside.classList.toggle('no-pin', aside.offsetHeight + offset > window.innerHeight);
-
         const isPinned = window.getComputedStyle(aside).position === 'sticky'
           && box.top < offset
           && box.bottom > aside.offsetHeight + offset;

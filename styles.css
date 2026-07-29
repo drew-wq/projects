@@ -2641,6 +2641,20 @@ a.work-row:hover .work-arrow {
     grid-column: 1;
   }
 
+  /* Four tags, two rows, whichever partner's copy they are. Left to wrap on
+     their own widths the two cards come out different heights, which drags
+     one column past the pin threshold while the other stays under it. */
+  .partner-ask-tags {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .partner-ask-tag {
+    padding-left: 6px;
+    padding-right: 6px;
+    text-align: center;
+  }
+
   /* The portrait and the card travel together and hold under the header
      while the editorial column scrolls past. `.no-pin` is set from
      script.js when the column is too tall for the viewport to hold it.
