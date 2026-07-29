@@ -2045,11 +2045,14 @@ html {
   opacity: 1;
 }
 
+/* Denim, not butter: at 2px on a sand track butter carries barely 1.2:1 and
+   reads as a smudge. Denim-500 clears 4:1 and is the accent already doing
+   this job elsewhere on the page. */
 .partner-rail span {
   display: block;
   width: 0;
   height: 100%;
-  background: var(--butter);
+  background: var(--denim-500);
   border-radius: 2px;
 }
 
