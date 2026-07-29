@@ -273,6 +273,10 @@ nav.desktop-nav span {
   top: 100%;
   left: 0;
   right: 0;
+  /* Must outrank .mobile-menu-backdrop (z-index 40); both sit inside the
+     header's stacking context, so without this the backdrop covers the
+     panel and swallows clicks on the Contact button. */
+  z-index: 45;
   overflow: hidden;
   background: var(--n0-paper);
   border-bottom: 1px solid var(--n2-sand);
@@ -1239,6 +1243,11 @@ footer {
 .footer-bar a {
   color: rgba(250, 247, 241, 0.85);
   transition: color 0.2s ease-out;
+  /* 12px text alone gives a ~19px target; pad it out to clear the 24px
+     minimum without changing the visual rhythm of the bar */
+  display: inline-block;
+  padding: 5px 0;
+  margin: -5px 0;
 }
 
 .footer-bar a:hover {
@@ -1856,5 +1865,815 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ==================== ABOUT PAGE ==================== */
+
+.about-shell {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.about-eyebrow {
+  margin: 0 0 20px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--denim-700);
+  font-family: var(--font-display);
+}
+
+/* -------------------- About hero -------------------- */
+
+.about-hero {
+  padding: 64px var(--space-mobile) 0;
+}
+
+.about-hero h1 {
+  margin: 0 0 24px;
+  font-size: 40px;
+  line-height: 1.02;
+  font-weight: 700;
+  font-family: var(--font-display);
+  letter-spacing: -0.035em;
+  color: var(--denim-900);
+  text-wrap: balance;
+  max-width: 15ch;
+}
+
+.about-lede {
+  margin: 0;
+  max-width: 54ch;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 1.75;
+  color: var(--n7-ink);
+}
+
+/* Even thirds on narrow screens — the labels are different lengths, so a
+   flex row wraps 1-then-2 and reads like a mistake */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 44px;
+  padding-top: 26px;
+  border-top: 1px solid var(--n2-sand);
+}
+
+.about-stat {
+  padding-right: 14px;
+  margin-right: 14px;
+  border-right: 1px solid var(--n2-sand);
+}
+
+.about-stat:last-child {
+  padding-right: 0;
+  margin-right: 0;
+  border-right: none;
+}
+
+.about-stat-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--denim-900);
+  font-variant-numeric: tabular-nums;
+}
+
+.about-stat-plus {
+  /* The "+" is part of the number, so it has to meet AA. Butter only works
+     on the dark grounds it's used on elsewhere; this is its light-ground
+     equivalent, matching the accented mark in .closing-cta. */
+  color: var(--denim-500);
+}
+
+.about-stat-label {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--n6-bark);
+}
+
+/* -------------------- Partner dossiers -------------------- */
+
+.partner {
+  padding: 72px var(--space-mobile);
+}
+
+.partner-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
+@media (max-width: 999px) {
+  .partner-body > .partner-block-label:first-child {
+    margin-top: 0;
+  }
+}
+
+
+.partner-aside-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.partner-portrait {
+  width: 100%;
+  aspect-ratio: 1 / 1.15;
+  border-radius: 18px;
+  background: repeating-linear-gradient(
+    45deg,
+    #eadfd3 0,
+    #eadfd3 11px,
+    #f4ece1 11px,
+    #f4ece1 22px
+  );
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  overflow: hidden;
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--n6-bark);
+  box-shadow: 0 12px 32px rgba(39, 80, 131, 0.15);
+}
+
+.partner-portrait-inner {
+  will-change: transform;
+}
+
+.partner-card {
+  position: relative;
+  background: var(--n1-bone);
+  border: 1px solid var(--n2-sand);
+  border-radius: 18px;
+  padding: 20px 18px 18px;
+  box-shadow: 0 2px 8px rgba(22, 19, 15, 0.04);
+  transition: box-shadow 0.4s cubic-bezier(0.2, 0.7, 0.3, 1),
+              border-color 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.partner-card.is-pinned {
+  border-color: var(--n3-putty);
+  box-shadow: 0 18px 44px rgba(22, 19, 15, 0.11);
+}
+
+/* Reading rail: fills as you move through that partner's section */
+.partner-rail {
+  position: absolute;
+  top: 0;
+  left: 18px;
+  right: 18px;
+  height: 2px;
+  background: var(--n2-sand);
+  border-radius: 2px;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.35s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.partner-card.is-pinned .partner-rail {
+  opacity: 1;
+}
+
+.partner-rail span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--butter);
+  border-radius: 2px;
+}
+
+.partner-spec {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--n2-sand);
+}
+
+.partner-spec:first-of-type {
+  padding-top: 4px;
+}
+
+.partner-spec-key {
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--n6-bark);
+  white-space: nowrap;
+}
+
+.partner-spec-val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--n7-ink);
+  text-align: right;
+}
+
+/* Long values read better stacked than right-aligned over two lines */
+.partner-spec--stacked {
+  display: block;
+}
+
+.partner-spec--stacked .partner-spec-val {
+  display: block;
+  margin-top: 4px;
+  text-align: left;
+}
+
+.partner-ask-label {
+  margin: 14px 0 9px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--n6-bark);
+}
+
+.partner-ask-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.partner-ask-tag {
+  background: var(--n0-paper);
+  border: 1px solid var(--n2-sand);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--n6-bark);
+  transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.3, 1),
+              border-color 0.2s, color 0.2s;
+}
+
+.partner-ask-tag:hover {
+  border-color: var(--denim-300);
+  color: var(--denim-700);
+  transform: translateY(-1px);
+}
+
+.partner-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* `a` in the base sheet is a class+type selector, so these need to outrank it */
+a.btn-book {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  padding: 12px 20px;
+  text-align: center;
+  background: var(--denim-700);
+  color: white;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(39, 80, 131, 0.26);
+  transition: all 0.2s;
+}
+
+a.btn-book::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+a.btn-book:hover {
+  background: var(--denim-900);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(28, 58, 94, 0.34);
+}
+
+a.btn-book:hover::before {
+  opacity: 1;
+}
+
+a.btn-book:active {
+  transform: scale(0.98);
+}
+
+a.btn-linkedin {
+  display: block;
+  padding: 11px 20px;
+  text-align: center;
+  border: 1.5px solid var(--n3-putty);
+  border-radius: 999px;
+  color: var(--n7-ink);
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+a.btn-linkedin:hover {
+  color: var(--denim-700);
+  border-color: var(--denim-500);
+  background: var(--n0-paper);
+}
+
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+a.btn-linkedin:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* -------------------- Partner editorial column -------------------- */
+
+.partner-intro,
+.partner-body {
+  min-width: 0;
+}
+
+.partner-intro h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--denim-900);
+}
+
+.partner-standfirst {
+  margin: 0 0 24px;
+  max-width: 46ch;
+  font-weight: 500;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--n6-bark);
+}
+
+.partner-para {
+  margin: 0 0 18px;
+  max-width: 64ch;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--n7-ink);
+}
+
+.partner-block-label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 36px 0 14px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--n6-bark);
+}
+
+.partner-block-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--n2-sand);
+}
+
+.spec-chips {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.spec-chip {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  background: var(--denim-100);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--denim-900);
+  transition: transform 0.22s cubic-bezier(0.2, 0.7, 0.3, 1),
+              border-color 0.22s, background 0.22s;
+}
+
+.spec-chip-dot {
+  color: var(--denim-500);
+  font-weight: 700;
+}
+
+.spec-chip:hover {
+  background: #d3e1f0;
+  border-color: var(--denim-300);
+  transform: translateY(-2px);
+}
+
+a.work-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 52px 1fr 24px;
+  align-items: baseline;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--n2-sand);
+  color: var(--n7-ink);
+}
+
+a.work-row:first-of-type {
+  border-top: 1px solid var(--n2-sand);
+}
+
+a.work-row::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 0;
+  height: 1px;
+  background: var(--denim-500);
+  transition: width 0.45s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+a.work-row:hover::after {
+  width: 100%;
+}
+
+.work-year {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--denim-500);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.22s;
+}
+
+a.work-row:hover .work-year {
+  color: var(--denim-900);
+}
+
+.work-text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--n7-ink);
+}
+
+a.work-row:hover .work-text {
+  color: var(--denim-900);
+}
+
+.work-arrow {
+  justify-self: end;
+  font-size: 15px;
+  color: var(--n5-taupe);
+  transition: transform 0.28s cubic-bezier(0.2, 0.7, 0.3, 1), color 0.22s;
+}
+
+a.work-row:hover .work-arrow {
+  color: var(--denim-500);
+  transform: translateX(5px);
+}
+
+.refs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.ref {
+  margin: 0;
+  background: var(--n1-bone);
+  border: 1px solid var(--n2-sand);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.ref-mark {
+  display: block;
+  margin-bottom: 12px;
+  font-family: var(--font-accent);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 0.6;
+  color: var(--butter);
+}
+
+.ref blockquote {
+  margin: 0 0 16px;
+  font-size: 15px;
+  line-height: 1.62;
+  color: var(--n7-ink);
+}
+
+.ref figcaption {
+  padding-top: 12px;
+  border-top: 1px solid var(--n2-sand);
+}
+
+.ref-name {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--n7-ink);
+}
+
+.ref-role {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--n6-bark);
+}
+
+/* -------------------- Split band -------------------- */
+
+.split-band {
+  padding: 64px var(--space-mobile);
+  background: var(--n1-bone);
+}
+
+.split-band h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--denim-900);
+}
+
+/* `.colon` is coloured per context across the site; match the closing CTA */
+.split-band h2 .colon {
+  color: var(--denim-500);
+}
+
+.split-intro {
+  margin: 0 0 32px;
+  max-width: 56ch;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--n6-bark);
+}
+
+.split-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.split-card {
+  background: var(--n0-paper);
+  border: 1px solid var(--n2-sand);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.split-who {
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--denim-700);
+}
+
+.split-card p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--n7-ink);
+}
+
+/* -------------------- About page motion -------------------- */
+
+@keyframes aboutRise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes aboutRiseLeft {
+  from { opacity: 0; transform: translateX(-26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes aboutRiseRight {
+  from { opacity: 0; transform: translateX(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes aboutMarkPop {
+  from { opacity: 0; transform: scale(0.4) rotate(-12deg); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Page-load cascade, matching the home page hero */
+.about-load {
+  animation: aboutRise 0.8s var(--about-d, 0s) cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+/* Scroll reveal. Gated on `.has-js` so the content still renders if
+   script.js never runs. */
+.has-js .reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.3, 1),
+              transform 0.7s cubic-bezier(0.2, 0.7, 0.3, 1);
+  transition-delay: var(--about-d, 0s);
+}
+
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* The split band's two cards arrive from their own sides */
+.has-js .split-card {
+  opacity: 0;
+}
+
+.split-card.is-in {
+  animation: aboutRiseLeft 0.75s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.split-card:last-child.is-in {
+  animation-name: aboutRiseRight;
+}
+
+/* The quote glyph lands a beat after its card */
+.has-js .ref-mark {
+  opacity: 0;
+}
+
+.ref.is-in .ref-mark {
+  animation: aboutMarkPop 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) 0.28s both;
+}
+
+/* -------------------- About page responsive -------------------- */
+
+@media (min-width: 680px) {
+  .about-hero {
+    padding: 76px var(--space-tablet) 0;
+  }
+
+  .about-hero h1 {
+    font-size: 54px;
+  }
+
+  .partner {
+    padding: 88px var(--space-tablet);
+  }
+
+  .partner-intro h2 {
+    font-size: 38px;
+  }
+
+  .about-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px 0;
+  }
+
+  .about-stat {
+    padding-right: 28px;
+    margin-right: 28px;
+  }
+
+  .split-band {
+    padding: 72px var(--space-tablet);
+  }
+
+  .spec-chips,
+  .refs,
+  .split-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+/* Between the phone and the pinned desktop column there is enough width to
+   sit the portrait beside the credentials card, rather than letting a
+   full-bleed portrait swallow the screen. */
+@media (min-width: 560px) and (max-width: 999px) {
+  .partner-aside-inner {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+}
+
+@media (min-width: 1000px) {
+  .about-hero {
+    padding: 84px var(--space-desktop) 0;
+  }
+
+  .about-hero h1 {
+    font-size: 62px;
+  }
+
+  .partner {
+    padding: 96px var(--space-desktop);
+  }
+
+  .split-band {
+    padding: 84px var(--space-desktop);
+  }
+
+  .split-band h2 {
+    font-size: 34px;
+  }
+
+  .about-stat {
+    padding-right: 34px;
+    margin-right: 34px;
+  }
+
+  .partner-grid {
+    grid-template-columns: 252px 1fr;
+    gap: 0 56px;
+    align-items: start;
+  }
+
+  .partner-aside {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .partner-intro {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .partner-body {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  /* Mirrored: Edwina's column pins left, Drew's pins right */
+  .partner--drew .partner-grid {
+    grid-template-columns: 1fr 252px;
+  }
+
+  .partner--drew .partner-aside {
+    grid-column: 2;
+  }
+
+  .partner--drew .partner-intro,
+  .partner--drew .partner-body {
+    grid-column: 1;
+  }
+
+  /* The portrait and the card travel together and hold under the header
+     while the editorial column scrolls past. `.no-pin` is set from
+     script.js when the column is too tall for the viewport to hold it.
+     script.js reads --pin-offset, so this is the single source of truth. */
+  .partner-aside {
+    --pin-offset: 110px; /* 90px header at this breakpoint + 20px of air */
+    position: sticky;
+    top: var(--pin-offset);
+    align-self: start;
+  }
+
+  .partner-aside.no-pin {
+    position: static;
+  }
+
+  .partner-aside.no-pin .partner-rail {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .has-js .reveal,
+  .has-js .split-card,
+  .has-js .ref-mark {
+    opacity: 1;
+    transform: none;
+  }
+
+  .partner-aside {
+    position: static;
+  }
+
+  .partner-rail {
+    display: none;
   }
 }

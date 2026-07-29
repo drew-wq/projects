@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="About pearse&co — A family practice of strategy and operations consultants.">
+  <meta name="description" content="Meet Edwina and Drew Pearse — the two partners behind pearse&co. No account managers, no bench, no hand-off. Strategy and operations advice from the people who do the work.">
   <meta name="theme-color" content="#faf7f1">
 
-  <title>About pearse&co — Strategy & Operations Consulting</title>
+  <title>About pearse&co — The two people you'll actually work with</title>
   <link rel="canonical" href="https://pearse.co/about-us.html">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
@@ -14,10 +14,60 @@
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="manifest" href="/manifest.json">
 
+  <!-- Open Graph / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://pearse.co/about-us.html">
+  <meta property="og:title" content="About pearse&co — The two people you'll actually work with">
+  <meta property="og:description" content="Meet Edwina and Drew Pearse — the two partners behind pearse&co. No account managers, no bench, no hand-off.">
+  <meta property="og:image" content="https://pearse.co/og-image.png">
+  <meta property="og:locale" content="en_AU">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://pearse.co/about-us.html">
+  <meta property="twitter:title" content="About pearse&co — The two people you'll actually work with">
+  <meta property="twitter:description" content="Meet Edwina and Drew Pearse — the two partners behind pearse&co. No account managers, no bench, no hand-off.">
+  <meta property="twitter:image" content="https://pearse.co/og-image.png">
+
+  <!-- Structured Data: AboutPage + the two partners -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "url": "https://pearse.co/about-us.html",
+    "name": "About pearse&co",
+    "description": "The two partners behind pearse&co.",
+    "mainEntity": {
+      "@type": "Organization",
+      "name": "pearse&co",
+      "url": "https://pearse.co",
+      "employee": [
+        {
+          "@type": "Person",
+          "name": "Edwina Pearse",
+          "jobTitle": "Strategy Partner",
+          "worksFor": { "@type": "Organization", "name": "pearse&co" },
+          "knowsAbout": ["Corporate strategy", "Board advisory", "Market entry", "Pricing", "Fundraising", "Turnarounds"]
+        },
+        {
+          "@type": "Person",
+          "name": "Drew Pearse",
+          "jobTitle": "Operations Partner",
+          "worksFor": { "@type": "Organization", "name": "pearse&co" },
+          "knowsAbout": ["Operating models", "Cost and margin recovery", "Process redesign", "PMO and governance", "Capability building"]
+        }
+      ]
+    }
+  }
+  </script>
+
   <link rel="stylesheet" href="./styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <!-- Set before paint so reveal elements start hidden only when JS can reveal them -->
+  <script>document.documentElement.classList.add('has-js');</script>
+  <script defer src="./script.js"></script>
+  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 </head>
 <body>
 
@@ -31,7 +81,7 @@
   </a>
 
   <nav class="desktop-nav">
-    <a href="./about-us.html">About</a>
+    <a href="./about-us.html" aria-current="page">About</a>
     <a href="./our-work.html">Our Work</a>
     <button class="nav-button">Contact</button>
   </nav>
@@ -44,7 +94,7 @@
 
   <div class="mobile-menu">
     <div class="mobile-menu-content">
-      <a href="./about-us.html" class="mobile-menu-link">About</a>
+      <a href="./about-us.html" class="mobile-menu-link" aria-current="page">About</a>
       <a href="./our-work.html" class="mobile-menu-link">Our Work</a>
       <button class="mobile-menu-contact">Contact</button>
     </div>
@@ -55,11 +105,290 @@
 
 <!-- ==================== MAIN ==================== -->
 <main>
-  <div class="page-content">
-    <h1>About Us</h1>
-    <p>Learn more about our consulting firm and the services we provide.</p>
-    <p>pearse&co is a family practice of consultants dedicated to helping ambitious founders and teams navigate strategy, operations, and growth challenges.</p>
-  </div>
+
+  <!-- ---------- HERO ---------- -->
+  <section class="about-hero">
+    <div class="about-shell">
+      <p class="about-eyebrow about-load" style="--about-d: 0s">People</p>
+      <h1 class="about-load" style="--about-d: .05s">The two people you'll actually work with.</h1>
+      <p class="about-lede about-load" style="--about-d: .15s">No account managers, no bench, no hand-off to someone you've never met. The names on the door are the names in the room — every time.</p>
+
+      <div class="about-stats about-load" style="--about-d: .25s">
+        <div class="about-stat">
+          <div class="about-stat-num" data-count-to="2">2</div>
+          <div class="about-stat-label">Partners, no layers</div>
+        </div>
+        <div class="about-stat">
+          <!-- TODO: confirm combined years of experience -->
+          <div class="about-stat-num"><span data-count-to="40">40</span><span class="about-stat-plus">+</span></div>
+          <div class="about-stat-label">Years between them</div>
+        </div>
+        <div class="about-stat">
+          <div class="about-stat-num" data-count-to="1">1</div>
+          <div class="about-stat-label">Shared inbox</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- EDWINA ---------- -->
+  <section class="partner partner--edwina">
+    <div class="about-shell partner-grid">
+
+      <div class="partner-intro">
+          <p class="about-eyebrow reveal">Partner · Strategy</p>
+          <h2 class="reveal" style="--about-d: .05s">Edwina Pearse</h2>
+          <p class="partner-standfirst reveal" style="--about-d: .1s">Corporate strategy, board advisory, and the hard yes/no calls most firms are too polite to name.</p>
+
+          <!-- TODO: confirm biography details -->
+          <p class="partner-para reveal" style="--about-d: .15s">Edwina spent fifteen years inside boardrooms — first as a strategy consultant, then as a chief of staff to two very different CEOs — before deciding she would rather advise a handful of companies properly than a hundred at arm's length.</p>
+          <p class="partner-para reveal" style="--about-d: .2s">She reads a business the way an editor reads a manuscript: quickly, generously, and with a sharp eye for the sentence that's doing all the work. Warm in the room, ruthless on the page. She'll tell you the thing your board is too polite to.</p>
+      </div>
+
+      <aside class="partner-aside">
+        <div class="partner-aside-inner reveal">
+          <div class="partner-portrait" data-parallax>
+            <span class="partner-portrait-inner">PHOTO: EDWINA, PORTRAIT</span>
+          </div>
+
+          <div class="partner-card" data-pin-card>
+            <div class="partner-rail" aria-hidden="true"><span data-pin-fill></span></div>
+
+            <div class="partner-spec">
+              <span class="partner-spec-key">Role</span>
+              <span class="partner-spec-val">Strategy Partner</span>
+            </div>
+            <div class="partner-spec">
+              <span class="partner-spec-key">Based</span>
+              <span class="partner-spec-val">Sydney, AU</span>
+            </div>
+            <!-- TODO: confirm the year Edwina started advising -->
+            <div class="partner-spec">
+              <span class="partner-spec-key">Advising since</span>
+              <span class="partner-spec-val">2004</span>
+            </div>
+            <!-- TODO: confirm sector list -->
+            <div class="partner-spec partner-spec--stacked">
+              <span class="partner-spec-key">Sectors</span>
+              <span class="partner-spec-val">Industrial · SaaS · Retail</span>
+            </div>
+
+            <div class="partner-ask-label">Ask me about</div>
+            <div class="partner-ask-tags">
+              <span class="partner-ask-tag">Market entry</span>
+              <span class="partner-ask-tag">Pricing</span>
+              <span class="partner-ask-tag">Board packs</span>
+              <span class="partner-ask-tag">Turnarounds</span>
+            </div>
+
+            <div class="partner-actions">
+              <!-- TODO: replace with Edwina's real scheduler URL -->
+              <a class="btn-book" href="https://cal.com/pearse-co/edwina">Book a call with Edwina</a>
+              <!-- TODO: replace with Edwina's real LinkedIn URL -->
+              <a class="btn-linkedin" href="https://www.linkedin.com/in/edwina-pearse" rel="noopener">Connect on LinkedIn <span class="btn-arrow" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="partner-body">
+        <p class="partner-block-label reveal">Specialties</p>
+        <div class="spec-chips">
+          <div class="spec-chip reveal"><span class="spec-chip-dot" aria-hidden="true">·</span> Corporate strategy &amp; direction</div>
+          <div class="spec-chip reveal" style="--about-d: .05s"><span class="spec-chip-dot" aria-hidden="true">·</span> Board &amp; founder advisory</div>
+          <div class="spec-chip reveal" style="--about-d: .1s"><span class="spec-chip-dot" aria-hidden="true">·</span> Market entry &amp; positioning</div>
+          <div class="spec-chip reveal" style="--about-d: .15s"><span class="spec-chip-dot" aria-hidden="true">·</span> Pricing &amp; commercial models</div>
+          <div class="spec-chip reveal" style="--about-d: .2s"><span class="spec-chip-dot" aria-hidden="true">·</span> Fundraising &amp; investor narrative</div>
+          <div class="spec-chip reveal" style="--about-d: .25s"><span class="spec-chip-dot" aria-hidden="true">·</span> Turnaround &amp; difficult calls</div>
+        </div>
+
+        <p class="partner-block-label reveal">Selected work</p>
+        <!-- TODO: point these at real case-study anchors once Our Work is built out -->
+        <div class="work-list">
+          <a class="work-row reveal" href="./our-work.html#fintech-series-b">
+            <span class="work-year">2025</span>
+            <span class="work-text">Rebuilt the investor narrative for a Series B fintech ahead of a AUD 60m raise.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="work-row reveal" style="--about-d: .06s" href="./our-work.html#manufacturer-reposition">
+            <span class="work-year">2024</span>
+            <span class="work-text">Repositioned a 40-year-old manufacturer around a single, defensible product line.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="work-row reveal" style="--about-d: .12s" href="./our-work.html#acquisition-review">
+            <span class="work-year">2023</span>
+            <span class="work-text">Chaired the strategy review that talked a founder out of the wrong acquisition.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="partner-block-label reveal">References</p>
+        <!-- TODO: get written permission from each referee before this goes live -->
+        <div class="refs">
+          <figure class="ref reveal">
+            <span class="ref-mark" aria-hidden="true">&ldquo;</span>
+            <blockquote>Edwina said the one thing our whole board had been dancing around for a year — kindly, but in the first meeting. We course-corrected within a quarter.</blockquote>
+            <figcaption>
+              <span class="ref-name">Marina Vasquez</span>
+              <span class="ref-role">Chair, Halden Industrial</span>
+            </figcaption>
+          </figure>
+          <figure class="ref reveal" style="--about-d: .08s">
+            <span class="ref-mark" aria-hidden="true">&ldquo;</span>
+            <blockquote>She has a rare gift for making a hard decision feel obvious in hindsight. We still ask ourselves &ldquo;what would Edwina cut?&rdquo;</blockquote>
+            <figcaption>
+              <span class="ref-name">Tom Fraser</span>
+              <span class="ref-role">CEO, Northbound SaaS</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ---------- DREW (mirrored) ---------- -->
+  <section class="partner partner--drew">
+    <div class="about-shell partner-grid">
+
+      <div class="partner-intro">
+          <p class="about-eyebrow reveal">Partner · Operations</p>
+          <h2 class="reveal" style="--about-d: .05s">Drew Pearse</h2>
+          <p class="partner-standfirst reveal" style="--about-d: .1s">Operating models, margin recovery, and the quiet fixes that give a founder their weekends back.</p>
+
+          <!-- TODO: confirm biography details -->
+          <p class="partner-para reveal" style="--about-d: .15s">Drew came up through operations the hard way — a warehouse floor, then a national logistics rollout, then a decade untangling the businesses that grew faster than their systems. He is calm, methodical, and mildly obsessed with checklists.</p>
+          <p class="partner-para reveal" style="--about-d: .2s">He is the person you want when a plan has to actually happen. He'll map the messy middle nobody wants to own, then hand it back to your team documented well enough that they never need to call us again — which, he insists, is the point.</p>
+      </div>
+
+      <aside class="partner-aside">
+        <div class="partner-aside-inner reveal">
+          <div class="partner-portrait" data-parallax>
+            <span class="partner-portrait-inner">PHOTO: DREW, PORTRAIT</span>
+          </div>
+
+          <div class="partner-card" data-pin-card>
+            <div class="partner-rail" aria-hidden="true"><span data-pin-fill></span></div>
+
+            <div class="partner-spec">
+              <span class="partner-spec-key">Role</span>
+              <span class="partner-spec-val">Operations Partner</span>
+            </div>
+            <div class="partner-spec">
+              <span class="partner-spec-key">Based</span>
+              <span class="partner-spec-val">Sydney, AU</span>
+            </div>
+            <!-- TODO: confirm the year Drew started advising -->
+            <div class="partner-spec">
+              <span class="partner-spec-key">Advising since</span>
+              <span class="partner-spec-val">2009</span>
+            </div>
+            <!-- TODO: confirm sector list -->
+            <div class="partner-spec partner-spec--stacked">
+              <span class="partner-spec-key">Sectors</span>
+              <span class="partner-spec-val">Logistics · Health · Services</span>
+            </div>
+
+            <div class="partner-ask-label">Ask me about</div>
+            <div class="partner-ask-tags">
+              <span class="partner-ask-tag">Cost recovery</span>
+              <span class="partner-ask-tag">Process design</span>
+              <span class="partner-ask-tag">PMO</span>
+              <span class="partner-ask-tag">Handover</span>
+            </div>
+
+            <div class="partner-actions">
+              <!-- TODO: replace with Drew's real scheduler URL -->
+              <a class="btn-book" href="https://cal.com/pearse-co/drew">Book a call with Drew</a>
+              <!-- TODO: replace with Drew's real LinkedIn URL -->
+              <a class="btn-linkedin" href="https://www.linkedin.com/in/drew-pearse" rel="noopener">Connect on LinkedIn <span class="btn-arrow" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="partner-body">
+        <p class="partner-block-label reveal">Specialties</p>
+        <div class="spec-chips">
+          <div class="spec-chip reveal"><span class="spec-chip-dot" aria-hidden="true">·</span> Operating-model design</div>
+          <div class="spec-chip reveal" style="--about-d: .05s"><span class="spec-chip-dot" aria-hidden="true">·</span> Cost &amp; margin recovery</div>
+          <div class="spec-chip reveal" style="--about-d: .1s"><span class="spec-chip-dot" aria-hidden="true">·</span> Process &amp; workflow redesign</div>
+          <div class="spec-chip reveal" style="--about-d: .15s"><span class="spec-chip-dot" aria-hidden="true">·</span> Delivery, PMO &amp; governance</div>
+          <div class="spec-chip reveal" style="--about-d: .2s"><span class="spec-chip-dot" aria-hidden="true">·</span> Systems &amp; tooling selection</div>
+          <div class="spec-chip reveal" style="--about-d: .25s"><span class="spec-chip-dot" aria-hidden="true">·</span> Handover &amp; capability building</div>
+        </div>
+
+        <p class="partner-block-label reveal">Selected work</p>
+        <!-- TODO: point these at real case-study anchors once Our Work is built out -->
+        <div class="work-list">
+          <a class="work-row reveal" href="./our-work.html#margin-recovery">
+            <span class="work-year">2025</span>
+            <span class="work-text">Recovered eleven margin points for a services firm without a single redundancy.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="work-row reveal" style="--about-d: .06s" href="./our-work.html#delivery-pmo">
+            <span class="work-year">2024</span>
+            <span class="work-text">Stood up a delivery PMO that shipped a two-year backlog in nine months.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+          <a class="work-row reveal" style="--about-d: .12s" href="./our-work.html#order-to-cash">
+            <span class="work-year">2023</span>
+            <span class="work-text">Redesigned the order-to-cash flow for a fast-scaling logistics operator.</span>
+            <span class="work-arrow" aria-hidden="true">→</span>
+          </a>
+        </div>
+
+        <p class="partner-block-label reveal">References</p>
+        <!-- TODO: get written permission from each referee before this goes live -->
+        <div class="refs">
+          <figure class="ref reveal">
+            <span class="ref-mark" aria-hidden="true">&ldquo;</span>
+            <blockquote>Drew found money in our operation we genuinely didn't know was there — and then taught our own people how to keep finding it.</blockquote>
+            <figcaption>
+              <span class="ref-name">Priya Nandakumar</span>
+              <span class="ref-role">COO, Meridian Logistics</span>
+            </figcaption>
+          </figure>
+          <figure class="ref reveal" style="--about-d: .08s">
+            <span class="ref-mark" aria-hidden="true">&ldquo;</span>
+            <blockquote>Unflappable. When everything was on fire, Drew was the one calmly numbering the buckets. We'd hire him again tomorrow.</blockquote>
+            <figcaption>
+              <span class="ref-name">James Okafor</span>
+              <span class="ref-role">Founder, Carehouse Group</span>
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ---------- SPLIT BAND ---------- -->
+  <section class="split-band">
+    <div class="about-shell">
+      <h2 class="reveal">Between the two of us<span class="colon">:</span></h2>
+      <!-- TODO: confirm the years -->
+      <p class="split-intro reveal" style="--about-d: .05s">Married sixteen years, in business for eleven. We split the work the way we split the washing up — cleanly, and without keeping score.</p>
+      <div class="split-cards">
+        <div class="split-card">
+          <div class="split-who">Edwina takes</div>
+          <p>The direction. Where you're headed, what you're saying no to, and the conversation your board keeps circling.</p>
+        </div>
+        <div class="split-card">
+          <div class="split-who">Drew takes</div>
+          <p>The doing. Turning the plan into a week-by-week reality your team can carry once we've gone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- CLOSING CTA ---------- -->
+  <section class="closing-cta">
+    <h2>Rather meet in person<span class="colon">?</span></h2>
+    <p>Pick whichever of us fits the problem — the first coffee is on us.</p>
+    <button type="button">Start a conversation</button>
+  </section>
+
 </main>
 
 <!-- ==================== FOOTER ==================== -->
@@ -95,7 +424,7 @@
 <!-- ==================== CONTACT MODAL ==================== -->
 <div class="modal-overlay">
   <div class="modal-content">
-    <button class="modal-close" aria-label="Close">×</button>
+    <button class="modal-close" aria-label="Close"><span></span><span></span></button>
 
     <!-- Form View -->
     <div class="modal-header">
@@ -110,6 +439,11 @@
         <label for="form-name">Name<span class="required-mark">*</span></label>
         <input id="form-name" type="text" name="name" placeholder="Your name" data-fs-field required>
         <span data-fs-error="name" class="field-error"></span>
+      </div>
+      <div class="form-group">
+        <label for="form-organization">Organisation</label>
+        <input id="form-organization" type="text" name="organization" placeholder="Your company name" data-fs-field>
+        <span data-fs-error="organization" class="field-error"></span>
       </div>
       <div class="form-group">
         <label for="form-email">Email<span class="required-mark">*</span></label>
@@ -147,9 +481,6 @@
     </div>
   </div>
 </div>
-
-<script src="./script.js" defer></script>
-<script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 
 </body>
 </html>

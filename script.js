@@ -398,7 +398,179 @@ class PearseController {
   }
 }
 
+// ==================== ABOUT PAGE ====================
+// Scroll reveals, stat counters, and the pinned partner column.
+// Every method no-ops on pages that don't have the markup.
+
+class AboutPage {
+  constructor() {
+    this.partners = Array.from(document.querySelectorAll('.partner'));
+    this.pendingReveals = Array.from(document.querySelectorAll('.reveal, .split-card'));
+    this.statsRow = document.querySelector('.about-stats');
+
+    if (!this.pendingReveals.length && !this.partners.length) return;
+
+    this.ticking = false;
+    this.initCounters();
+    this.initFrameLoop();
+  }
+
+  prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  // ==================== REVEALS ====================
+
+  // Deliberately not IntersectionObserver. It only reports intersection
+  // *changes*, so a fast flick, an anchor jump, or a restored scroll
+  // position can carry an element from below the fold to above it without
+  // it ever being observed as intersecting — leaving it invisible for
+  // good. A rect test on the existing scroll frame reveals anything at or
+  // above the fold, so nothing can be stranded.
+  updateReveals() {
+    if (!this.pendingReveals.length) return;
+
+    const fold = window.innerHeight * 0.92;
+    const stillPending = [];
+
+    this.pendingReveals.forEach((el) => {
+      if (el.getBoundingClientRect().top < fold) {
+        el.classList.add('is-in');
+      } else {
+        stillPending.push(el);
+      }
+    });
+
+    this.pendingReveals = stillPending;
+  }
+
+  // ==================== STAT COUNTERS ====================
+
+  initCounters() {
+    if (!this.statsRow) return;
+
+    const run = () => this.runCounters();
+
+    if (!('IntersectionObserver' in window)) {
+      run();
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        run();
+        observer.disconnect();
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(this.statsRow);
+  }
+
+  runCounters() {
+    const reduced = this.prefersReducedMotion();
+
+    this.statsRow.querySelectorAll('[data-count-to]').forEach((el) => {
+      const target = parseInt(el.getAttribute('data-count-to'), 10);
+      if (Number.isNaN(target)) return;
+
+      if (reduced) {
+        el.textContent = String(target);
+        return;
+      }
+
+      const duration = 900;
+      let start = null;
+
+      const step = (now) => {
+        if (start === null) start = now;
+        const progress = Math.min((now - start) / duration, 1);
+        // ease-out cubic
+        el.textContent = String(Math.round(target * (1 - Math.pow(1 - progress, 3))));
+        if (progress < 1) requestAnimationFrame(step);
+      };
+
+      requestAnimationFrame(step);
+    });
+  }
+
+  // ==================== SCROLL FRAME ====================
+
+  initFrameLoop() {
+    this.onScroll = () => {
+      if (this.ticking) return;
+      this.ticking = true;
+      requestAnimationFrame(() => {
+        this.ticking = false;
+        this.updateReveals();
+        this.updatePinning();
+      });
+    };
+
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    window.addEventListener('resize', this.onScroll);
+    window.addEventListener('orientationchange', this.onScroll);
+    // Late web-font swaps reflow the page after first paint
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => this.onScroll());
+    }
+
+    this.updateReveals();
+    this.updatePinning();
+  }
+
+  // ==================== PINNED COLUMN ====================
+
+  updatePinning() {
+    if (!this.partners.length) return;
+
+    const reduced = this.prefersReducedMotion();
+
+    this.partners.forEach((section) => {
+      const aside = section.querySelector('.partner-aside');
+      const card = section.querySelector('[data-pin-card]');
+      const fill = section.querySelector('[data-pin-fill]');
+      const portrait = section.querySelector('.partner-portrait-inner');
+      const box = section.getBoundingClientRect();
+
+      if (aside && card && fill) {
+        // Read the sticky offset back off the stylesheet rather than
+        // duplicating it here — custom properties resolve even while the
+        // element is `position: static`, so this stays correct in both states
+        const offset = parseFloat(
+          window.getComputedStyle(aside).getPropertyValue('--pin-offset')
+        ) || 0;
+
+        // A column taller than the space under the header cannot hold
+        // without clipping, so let it scroll normally instead
+        aside.classList.toggle('no-pin', aside.offsetHeight + offset > window.innerHeight);
+
+        const isPinned = window.getComputedStyle(aside).position === 'sticky'
+          && box.top < offset
+          && box.bottom > aside.offsetHeight + offset;
+
+        card.classList.toggle('is-pinned', isPinned);
+
+        const travel = box.height - window.innerHeight;
+        const progress = travel > 0 ? (offset - box.top) / travel : 0;
+        fill.style.width = `${(Math.max(0, Math.min(1, progress)) * 100).toFixed(1)}%`;
+      }
+
+      if (portrait) {
+        if (reduced) {
+          portrait.style.transform = '';
+          return;
+        }
+        const mid = (box.top + box.height / 2 - window.innerHeight / 2) / window.innerHeight;
+        const shift = Math.max(-1, Math.min(1, mid)) * -10;
+        portrait.style.transform = `translateY(${shift.toFixed(1)}px)`;
+      }
+    });
+  }
+}
+
 let controller = null;
+let aboutPage = null;
 
 // @formspree/ajax dispatches no DOM events; the success and error paths are
 // config callbacks. onSuccess runs only once the server has confirmed the
@@ -437,6 +609,7 @@ function initFormspree() {
 
 function boot() {
   controller = new PearseController();
+  aboutPage = new AboutPage();
   initFormspree();
 }
 
