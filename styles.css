@@ -2147,6 +2147,7 @@ img.partner-portrait-inner {
   padding: 5px 12px;
   font-size: 12px;
   font-weight: 500;
+  white-space: nowrap;
   color: var(--n6-bark);
   transition: transform 0.2s cubic-bezier(0.2, 0.7, 0.3, 1),
               border-color 0.2s, color 0.2s;
@@ -2672,18 +2673,15 @@ a.work-row:hover .work-arrow {
     grid-column: 1;
   }
 
-  /* Four tags, two rows, whichever partner's copy they are. Left to wrap on
+  /* One tag per row, whichever partner's copy they are. Left to wrap on
      their own widths the two cards come out different heights, which drags
-     one column past the pin threshold while the other stays under it. */
+     one column past the pin threshold while the other stays under it. Two
+     columns are too narrow (~103px) for tags like "Product Management". */
   .partner-ask-tags {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .partner-ask-tag {
-    padding-left: 6px;
-    padding-right: 6px;
-    text-align: center;
+    grid-template-columns: 1fr;
+    justify-items: start;
+    gap: 6px;
   }
 
   /* The portrait and the card travel together and hold under the header
