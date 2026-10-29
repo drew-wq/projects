@@ -1,0 +1,514 @@
+<title>pearse&amp;co Site Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gabarito:wght@500;600;700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: review bench. Top bar picks page + viewport; the live page sits on a desk; notes rail on the right (stacks below on phones). */
+:root {
+  --bg: #f1ede3;
+  --surface: #faf7f1;
+  --line: #e4ded2;
+  --fg: #16130f;
+  --muted: #7b756a;
+  --accent: #3268a8;
+  --accent-ink: #faf7f1;
+  --pin: #efc75e;
+  --pin-ink: #16130f;
+  --done: #5e7f3a;
+  --danger: #c94a26;
+  --desk: #e4ded2;
+  --font-display: 'Gabarito', 'Trebuchet MS', sans-serif;
+  --font-body: 'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120f; --surface: #1d1a16; --line: #34302a; --fg: #f1ede3; --muted: #a69f91;
+    --accent: #8fafd1; --accent-ink: #14120f; --done: #a9c97e; --danger: #e8805f; --desk: #0e0d0b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14120f; --surface: #1d1a16; --line: #34302a; --fg: #f1ede3; --muted: #a69f91;
+  --accent: #8fafd1; --accent-ink: #14120f; --done: #a9c97e; --danger: #e8805f; --desk: #0e0d0b;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { height: 100%; display: grid; grid-template-rows: auto 1fr; }
+.bar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+  padding-block: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  border-bottom: 1px solid var(--line); background: var(--surface);
+}
+.brand { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -0.01em; white-space: nowrap; }
+.brand span { color: var(--muted); font-weight: 500; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.tab {
+  border: 1px solid transparent; background: none; border-radius: 6px; padding: 6px 10px;
+  display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-weight: 500;
+}
+.tab:hover { color: var(--fg); background: var(--bg); }
+.tab[aria-selected="true"] { color: var(--fg); border-color: var(--line); background: var(--bg); }
+.count {
+  font-family: var(--font-mono); font-size: 11px; min-width: 18px; padding: 1px 5px; border-radius: 9px;
+  background: var(--pin); color: var(--pin-ink); text-align: center;
+}
+.count[data-zero] { background: var(--line); color: var(--muted); }
+.controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg button { background: none; border: 0; padding: 6px 10px; color: var(--muted); font-size: 13px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.mode {
+  border: 0; border-radius: 7px; padding: 7px 12px; font-weight: 600;
+  background: var(--accent); color: var(--accent-ink); display: inline-flex; gap: 8px; align-items: center;
+}
+.mode[aria-pressed="false"] { background: var(--line); color: var(--fg); }
+.mode .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--pin); }
+.mode[aria-pressed="false"] .dot { background: var(--muted); }
+
+.main { display: grid; grid-template-columns: 1fr 340px; min-height: 0; }
+.desk { background: var(--desk); position: relative; overflow: hidden; min-height: 0; }
+.frame-wrap { position: absolute; top: 0; left: 50%; transform-origin: top center; background: #fff; box-shadow: 0 1px 0 var(--line), 0 10px 30px rgba(0,0,0,.12); }
+.frame-wrap iframe { border: 0; display: block; width: 100%; height: 100%; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); }
+.hint {
+  position: absolute; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%);
+  background: var(--fg); color: var(--bg); padding: 7px 12px; border-radius: 20px; font-size: 12.5px; white-space: nowrap;
+  pointer-events: none;
+}
+
+.rail { border-left: 1px solid var(--line); background: var(--surface); display: flex; flex-direction: column; min-height: 0; }
+.rail-head { padding: 14px 16px 10px; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rail-head h2 { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 600; text-wrap: balance; }
+.rail-head .path { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+.notes { overflow: auto; padding: 0 12px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; min-height: 0; }
+.status-line { font-size: 12px; color: var(--muted); padding: 0 16px 10px; }
+.status-line.warn { color: var(--danger); }
+
+.composer { margin: 0 12px 12px; border: 1px solid var(--accent); border-radius: 10px; padding: 12px; background: var(--bg); display: flex; flex-direction: column; gap: 8px; }
+.composer label { font-size: 12px; color: var(--muted); }
+.target { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); word-break: break-word; }
+.target b { color: var(--fg); font-weight: 500; }
+textarea { width: 100%; min-height: 88px; resize: vertical; font: inherit; color: var(--fg); background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; }
+.row { display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 7px; padding: 6px 12px; font-weight: 500; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn:disabled { opacity: .5; cursor: default; }
+.kbd { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-right: auto; }
+
+.note { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 26px 1fr; gap: 4px 10px; background: var(--surface); cursor: pointer; }
+.note:hover { border-color: var(--muted); }
+.note.active { border-color: var(--accent); }
+.note .num { grid-row: span 3; width: 24px; height: 24px; border-radius: 50%; background: var(--pin); color: var(--pin-ink); font: 600 12px/24px var(--font-mono); text-align: center; }
+.note.done .num { background: var(--line); color: var(--muted); }
+.note .body { white-space: pre-wrap; word-break: break-word; line-height: 1.45; min-width: 0; }
+.note.done .body { color: var(--muted); text-decoration: line-through; text-decoration-color: var(--line); }
+.note .meta { font-size: 11.5px; color: var(--muted); display: flex; gap: 8px; flex-wrap: wrap; min-width: 0; }
+.note .meta code { font-family: var(--font-mono); font-size: 11px; overflow-wrap: anywhere; }
+.note .acts { display: flex; gap: 6px; }
+.note .acts button { background: none; border: 0; padding: 2px 0; font-size: 12px; color: var(--accent); }
+.note .acts button.del { color: var(--danger); }
+.chip { font-size: 10.5px; text-transform: uppercase; letter-spacing: .06em; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--line); }
+.chip.done { color: var(--done); border-color: currentColor; }
+.chip.fixed { color: var(--accent); border-color: currentColor; }
+.section-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); padding: 10px 4px 2px; }
+.empty { padding: 18px 8px; color: var(--muted); line-height: 1.5; }
+.empty strong { color: var(--fg); font-weight: 600; }
+
+@media (max-width: 820px) {
+  .main { grid-template-columns: 1fr; grid-template-rows: 62vh auto; overflow: auto; }
+  .rail { border-left: 0; border-top: 1px solid var(--line); }
+  .notes { overflow: visible; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand">pearse&amp;co <span>review</span></div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Site pages"></nav>
+    <div class="controls">
+      <div class="seg" id="widths" role="group" aria-label="Viewport width">
+        <button type="button" data-w="1280" aria-pressed="true">Desktop</button>
+        <button type="button" data-w="820" aria-pressed="false">Tablet</button>
+        <button type="button" data-w="390" aria-pressed="false">Phone</button>
+      </div>
+      <button type="button" class="mode" id="mode" aria-pressed="true"><span class="dot"></span><span id="modeLabel">Annotating</span></button>
+    </div>
+  </header>
+  <div class="main">
+    <section class="desk" id="desk" aria-label="Page preview">
+      <div class="frame-wrap" id="wrap"><iframe id="frame" title="Site page"></iframe></div>
+      <div class="loading" id="loading">Loading page…</div>
+      <div class="hint" id="hint">Click anything on the page to leave a note</div>
+    </section>
+    <aside class="rail">
+      <div class="rail-head"><h2 id="pageTitle">Home</h2><span class="path" id="pagePath">index.html</span></div>
+      <div class="status-line" id="status">Connecting to saved notes…</div>
+      <form class="composer" id="composer" hidden>
+        <label for="noteText">New note</label>
+        <div class="target" id="target"></div>
+        <textarea id="noteText" placeholder="What should change here? e.g. Tighten this headline to one line on mobile."></textarea>
+        <div class="row">
+          <span class="kbd">⌘↵ to save</span>
+          <button type="button" class="btn" id="cancel">Cancel</button>
+          <button type="submit" class="btn primary" id="save">Save note</button>
+        </div>
+      </form>
+      <div class="notes" id="notes"></div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const PAGES = [
+  { file: 'index.html', name: 'Home' },
+  { file: 'about-us.html', name: 'About us' },
+  { file: 'our-work.html', name: 'Our work' },
+  { file: 'privacy.html', name: 'Privacy' },
+  { file: 'hello-world.html', name: 'Hello World' },
+];
+const SITE_BASE = new URL('site/', location.href).href;
+
+const $ = (id) => document.getElementById(id);
+const frame = $('frame'), wrap = $('wrap'), desk = $('desk');
+const state = {
+  page: PAGES[0].file,
+  width: 1280,
+  annotating: true,
+  notes: [],          // all notes from db
+  draft: null,        // pending target {selector, ...}
+  active: null,       // highlighted note id
+  db: null,
+};
+
+try { const s = JSON.parse(localStorage.getItem('review-prefs') || '{}'); if (PAGES.some(p => p.file === s.page)) state.page = s.page; if (s.width) state.width = s.width; } catch (e) {}
+function savePrefs() { try { localStorage.setItem('review-prefs', JSON.stringify({ page: state.page, width: state.width })); } catch (e) {} }
+
+/* ---------- tabs & controls ---------- */
+function renderTabs() {
+  const tabs = $('tabs');
+  tabs.innerHTML = '';
+  for (const p of PAGES) {
+    const open = state.notes.filter(n => n.page === p.file && n.status !== 'done').length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab');
+    b.setAttribute('aria-selected', String(p.file === state.page));
+    b.textContent = p.name;
+    const c = document.createElement('span'); c.className = 'count'; c.textContent = open;
+    if (!open) c.dataset.zero = '';
+    b.append(c);
+    b.onclick = () => loadPage(p.file);
+    tabs.append(b);
+  }
+}
+$('widths').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.width = +b.dataset.w; savePrefs(); syncWidthButtons(); fit();
+});
+function syncWidthButtons() { for (const b of $('widths').children) b.setAttribute('aria-pressed', String(+b.dataset.w === state.width)); }
+$('mode').onclick = () => {
+  state.annotating = !state.annotating;
+  $('mode').setAttribute('aria-pressed', String(state.annotating));
+  $('modeLabel').textContent = state.annotating ? 'Annotating' : 'Browsing';
+  $('hint').textContent = state.annotating ? 'Click anything on the page to leave a note' : 'Browsing: links and buttons work normally';
+  hideHover();
+};
+
+/* ---------- frame sizing ---------- */
+function fit() {
+  const avail = desk.clientWidth - 32;
+  const scale = Math.min(1, avail / state.width);
+  wrap.style.width = state.width + 'px';
+  wrap.style.height = (desk.clientHeight / scale) + 'px';
+  wrap.style.transform = `translateX(-50%) scale(${scale})`;
+  requestAnimationFrame(placePins);
+}
+new ResizeObserver(fit).observe(desk);
+
+/* ---------- loading a page ---------- */
+let loadToken = 0;
+async function loadPage(file) {
+  state.page = file; state.draft = null; state.active = null; savePrefs();
+  const p = PAGES.find(x => x.file === file);
+  $('pageTitle').textContent = p.name; $('pagePath').textContent = file;
+  $('composer').hidden = true;
+  renderTabs(); renderNotes();
+  $('loading').hidden = false;
+  const token = ++loadToken;
+  try {
+    const res = await fetch('site/' + file);
+    if (!res.ok) throw new Error(res.status);
+    let html = await res.text();
+    // Resolve relative assets against the published site folder; root-relative ones too.
+    html = html.replace(/(href|src)="\/(?!\/)/g, '$1="./');
+    html = html.replace(/<head([^>]*)>/i, `<head$1><base href="${SITE_BASE}">`);
+    if (token !== loadToken) return;
+    frame.onload = () => { if (token === loadToken) instrument(); };
+    frame.srcdoc = html;
+  } catch (e) {
+    $('loading').textContent = 'Could not load ' + file + '. Ask Claude to republish the review page.';
+  }
+}
+
+/* ---------- inside the frame ---------- */
+let doc = null, hoverBox = null, pinLayer = null;
+function instrument() {
+  doc = frame.contentDocument;
+  $('loading').hidden = true;
+  if (!doc) return;
+  const style = doc.createElement('style');
+  style.textContent = `
+    .__rv-hover{position:absolute;pointer-events:none;z-index:2147483646;outline:2px solid #3268a8;outline-offset:1px;background:rgba(50,104,168,.08);border-radius:2px;transition:all .06s}
+    .__rv-layer{position:absolute;top:0;left:0;width:0;height:0;z-index:2147483647}
+    .__rv-pin{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:#efc75e;border:2px solid #16130f;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+    .__rv-pin span{display:block;transform:rotate(45deg);font:600 11px/22px ui-monospace,Menlo,monospace;text-align:center;color:#16130f}
+    .__rv-pin.done{background:#e4ded2;opacity:.7}
+    .__rv-pin.draft{background:#3268a8;border-color:#fff}.__rv-pin.draft span{color:#fff}
+    .__rv-pin.active{box-shadow:0 0 0 4px rgba(50,104,168,.45)}
+    .__rv-flash{animation:__rvf 1.2s ease}
+    @keyframes __rvf{0%,60%{outline:3px solid #efc75e;outline-offset:2px}100%{outline:3px solid transparent}}`;
+  doc.head.append(style);
+  hoverBox = doc.createElement('div'); hoverBox.className = '__rv-hover'; hoverBox.hidden = true;
+  pinLayer = doc.createElement('div'); pinLayer.className = '__rv-layer';
+  doc.body.append(hoverBox, pinLayer);
+
+  doc.addEventListener('mousemove', (e) => {
+    if (!state.annotating || isOurs(e.target)) return hideHover();
+    const r = e.target.getBoundingClientRect(), w = doc.defaultView;
+    Object.assign(hoverBox.style, { left: r.left + w.scrollX + 'px', top: r.top + w.scrollY + 'px', width: r.width + 'px', height: r.height + 'px' });
+    hoverBox.hidden = false;
+  }, true);
+  doc.addEventListener('mouseleave', hideHover);
+  doc.addEventListener('click', onFrameClick, true);
+  doc.addEventListener('submit', (e) => { if (state.annotating) e.preventDefault(); }, true);
+  new (frame.contentWindow.ResizeObserver)(() => placePins()).observe(doc.body);
+  placePins();
+  setTimeout(placePins, 400); setTimeout(placePins, 1500); // after fonts/images settle
+}
+function isOurs(el) { return el && el.closest && el.closest('.__rv-layer, .__rv-hover'); }
+function hideHover() { if (hoverBox) hoverBox.hidden = true; }
+
+function onFrameClick(e) {
+  const pin = e.target.closest && e.target.closest('.__rv-pin');
+  if (pin) { e.preventDefault(); e.stopPropagation(); if (pin.dataset.id) focusNote(pin.dataset.id, false); return; }
+  if (!state.annotating) {
+    // Keep in-site navigation inside the review tool.
+    const a = e.target.closest('a[href]');
+    if (a) {
+      const raw = a.getAttribute('href');
+      const url = new URL(a.href, SITE_BASE);
+      const file = raw === '/' || raw === './' ? 'index.html' : url.pathname.split('/').pop();
+      if (url.href.startsWith(SITE_BASE) || raw.startsWith('/')) {
+        e.preventDefault();
+        const target = PAGES.find(p => p.file === file);
+        if (target && target.file !== state.page) loadPage(target.file);
+        else if (url.hash) doc.querySelector(url.hash)?.scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      a.target = '_blank';
+    }
+    return;
+  }
+  e.preventDefault(); e.stopPropagation();
+  const el = e.target;
+  const r = el.getBoundingClientRect();
+  state.draft = {
+    selector: cssPath(el),
+    tag: el.tagName.toLowerCase(),
+    text: (el.innerText || el.alt || el.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim().slice(0, 200),
+    section: sectionContext(el),
+    offsetX: r.width ? +((e.clientX - r.left) / r.width).toFixed(3) : 0.5,
+    offsetY: r.height ? +((e.clientY - r.top) / r.height).toFixed(3) : 0.5,
+  };
+  state.active = null;
+  showComposer();
+  placePins();
+}
+
+function cssPath(el) {
+  const parts = [];
+  while (el && el.nodeType === 1 && el !== doc.documentElement) {
+    if (el.id) { parts.unshift('#' + CSS.escape(el.id)); break; }
+    let part = el.tagName.toLowerCase();
+    const parent = el.parentElement;
+    if (parent) {
+      const same = [...parent.children].filter(c => c.tagName === el.tagName);
+      if (same.length > 1) part += `:nth-of-type(${same.indexOf(el) + 1})`;
+    }
+    parts.unshift(part);
+    el = parent;
+  }
+  return parts.join(' > ');
+}
+function sectionContext(el) {
+  const sec = el.closest('section, header, footer, nav, main, article');
+  if (!sec) return '';
+  const h = sec.querySelector('h1, h2, h3');
+  const label = sec.id ? '#' + sec.id : (sec.className && typeof sec.className === 'string' ? '.' + sec.className.trim().split(/\s+/)[0] : sec.tagName.toLowerCase());
+  return label + (h ? ` "${h.innerText.replace(/\s+/g, ' ').trim().slice(0, 80)}"` : '');
+}
+
+function pagePins() {
+  const list = state.notes.filter(n => n.page === state.page);
+  const open = list.filter(n => n.status !== 'done');
+  const done = list.filter(n => n.status === 'done');
+  return [...open, ...done];
+}
+function numberFor(id) {
+  const list = state.notes.filter(n => n.page === state.page);
+  return list.findIndex(n => n.id === id) + 1;
+}
+function placePins() {
+  if (!pinLayer || !doc) return;
+  pinLayer.textContent = '';
+  const w = doc.defaultView;
+  const put = (target, cls, label, id) => {
+    let el = null;
+    try { el = doc.querySelector(target.selector); } catch (e) {}
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const pin = doc.createElement('div');
+    pin.className = '__rv-pin ' + cls;
+    pin.style.left = r.left + w.scrollX + r.width * (target.offsetX ?? .5) + 'px';
+    pin.style.top = r.top + w.scrollY + r.height * (target.offsetY ?? .5) + 'px';
+    const s = doc.createElement('span'); s.textContent = label; pin.append(s);
+    if (id) pin.dataset.id = id;
+    pinLayer.append(pin);
+  };
+  for (const n of pagePins()) put(n, (n.status === 'done' ? 'done' : '') + (n.id === state.active ? ' active' : ''), numberFor(n.id), n.id);
+  if (state.draft) put(state.draft, 'draft', '+');
+}
+
+/* ---------- composer ---------- */
+function showComposer() {
+  const d = state.draft;
+  $('target').innerHTML = '';
+  const b = document.createElement('b'); b.textContent = `<${d.tag}>`;
+  $('target').append(b, ' ' + (d.text ? `“${d.text.slice(0, 90)}${d.text.length > 90 ? '…' : ''}”` : d.selector));
+  $('composer').hidden = false;
+  $('noteText').value = '';
+  $('save').disabled = !state.db;
+  $('noteText').focus();
+}
+function closeComposer() { state.draft = null; $('composer').hidden = true; placePins(); }
+$('cancel').onclick = closeComposer;
+$('noteText').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); $('composer').requestSubmit(); }
+  if (e.key === 'Escape') closeComposer();
+});
+$('composer').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const note = $('noteText').value.trim();
+  if (!note || !state.draft || !state.db) return;
+  $('save').disabled = true;
+  const data = {
+    ...state.draft,
+    page: state.page,
+    note,
+    status: 'open',
+    viewport: state.width,
+    createdAt: new Date().toISOString(),
+  };
+  try {
+    await state.db.collection('annotations').add(data);
+    closeComposer();
+  } catch (err) {
+    setStatus(err.code === 'permission_denied' ? 'You can view notes but not add them on this link.' : 'Note not saved: ' + (err.message || err.code), true);
+  } finally { $('save').disabled = false; }
+});
+
+/* ---------- notes list ---------- */
+function renderNotes() {
+  const box = $('notes');
+  box.textContent = '';
+  const list = state.notes.filter(n => n.page === state.page);
+  if (!list.length) {
+    box.innerHTML = '<div class="empty"><strong>No notes on this page yet.</strong><br>With <em>Annotating</em> on, click any heading, image, button or paragraph in the preview and describe the change. Claude reads every note here and makes the edits in the project.</div>';
+    return;
+  }
+  const open = list.filter(n => n.status !== 'done');
+  const done = list.filter(n => n.status === 'done');
+  const group = (label, items) => {
+    if (!items.length) return;
+    const l = document.createElement('div'); l.className = 'section-label'; l.textContent = `${label} · ${items.length}`; box.append(l);
+    for (const n of items) box.append(noteCard(n));
+  };
+  group('Open', open);
+  group('Done', done);
+}
+function noteCard(n) {
+  const c = document.createElement('article');
+  c.className = 'note' + (n.status === 'done' ? ' done' : '') + (n.id === state.active ? ' active' : '');
+  c.tabIndex = 0;
+  const num = document.createElement('div'); num.className = 'num'; num.textContent = numberFor(n.id);
+  const body = document.createElement('div'); body.className = 'body'; body.textContent = n.note;
+  const meta = document.createElement('div'); meta.className = 'meta';
+  const code = document.createElement('code'); code.textContent = `<${n.tag}>` + (n.text ? ` ${n.text.slice(0, 50)}${n.text.length > 50 ? '…' : ''}` : '');
+  meta.append(code);
+  const vp = document.createElement('span'); vp.textContent = n.viewport >= 1200 ? 'desktop' : n.viewport >= 700 ? 'tablet' : 'phone'; meta.append(vp);
+  if (n.claudeReply) { const ch = document.createElement('span'); ch.className = 'chip fixed'; ch.textContent = 'Claude: ' + n.claudeReply; meta.append(ch); }
+  const acts = document.createElement('div'); acts.className = 'acts';
+  const toggle = document.createElement('button'); toggle.type = 'button';
+  toggle.textContent = n.status === 'done' ? 'Reopen' : 'Mark done';
+  toggle.onclick = (e) => { e.stopPropagation(); update(n.id, { status: n.status === 'done' ? 'open' : 'done' }); };
+  const del = document.createElement('button'); del.type = 'button'; del.className = 'del'; del.textContent = 'Delete';
+  del.onclick = (e) => {
+    e.stopPropagation();
+    if (del.dataset.armed) return remove(n.id);
+    del.dataset.armed = '1'; del.textContent = 'Confirm delete';
+    setTimeout(() => { if (del.isConnected) { delete del.dataset.armed; del.textContent = 'Delete'; } }, 3000);
+  };
+  acts.append(toggle, del);
+  c.append(num, body, meta, acts);
+  c.onclick = () => focusNote(n.id, true);
+  c.onkeydown = (e) => { if (e.key === 'Enter') focusNote(n.id, true); };
+  return c;
+}
+function focusNote(id, scroll) {
+  state.active = id;
+  const n = state.notes.find(x => x.id === id);
+  renderNotes(); placePins();
+  if (scroll && n && doc) {
+    let el = null; try { el = doc.querySelector(n.selector); } catch (e) {}
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('__rv-flash'); void el.offsetWidth; el.classList.add('__rv-flash');
+    } else setStatus(`Couldn't find the element for note ${numberFor(id)}; the page may have changed.`, true);
+  }
+  if (!scroll) document.querySelector('.note.active')?.scrollIntoView({ block: 'nearest' });
+}
+async function update(id, patch) {
+  try { await state.db.collection('annotations').doc(id).update({ ...patch, updatedAt: new Date().toISOString() }); }
+  catch (err) { setStatus('Change not saved: ' + (err.message || err.code), true); }
+}
+async function remove(id) {
+  try { await state.db.collection('annotations').doc(id).delete(); }
+  catch (err) { setStatus('Delete failed: ' + (err.message || err.code), true); }
+}
+function setStatus(msg, warn) { const s = $('status'); s.textContent = msg; s.classList.toggle('warn', !!warn); }
+
+/* ---------- boot ---------- */
+syncWidthButtons(); renderTabs(); fit(); loadPage(state.page);
+(async () => {
+  const db = await window.claude?.use?.('db');
+  if (!db) { setStatus('Notes are unavailable here. Open this page signed in to claude.ai to add notes.', true); return; }
+  state.db = db;
+  $('save').disabled = false;
+  db.collection('annotations').orderBy('createdAt').onSnapshot((snap) => {
+    state.notes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const open = state.notes.filter(n => n.status !== 'done').length;
+    setStatus(`${open} open note${open === 1 ? '' : 's'} across the site · saved for Claude`);
+    renderTabs(); renderNotes(); placePins();
+  }, (err) => setStatus('Lost connection to notes: ' + (err.message || err.code), true));
+})();
+</script>

@@ -1229,6 +1229,12 @@ footer {
   color: rgba(250, 247, 241, 0.85);
 }
 
+.footer-acknowledgement {
+  margin: 0;
+  max-width: 44ch;
+  line-height: 1.6;
+}
+
 .footer-contact-content .colon {
   color: var(--denim-300);
 }
