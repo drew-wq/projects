@@ -850,12 +850,6 @@ section {
   transition: all 0.55s ease;
 }
 
-.person-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--butter);
-  background: rgba(239, 199, 94, 0.06);
-}
-
 .person-card.hidden {
   max-height: 0;
   opacity: 0;
@@ -924,12 +918,7 @@ section {
   font-size: 12px;
   color: var(--denim-700);
   cursor: pointer;
-  transition: color 0.2s ease-out;
   letter-spacing: 0.05em;
-}
-
-.person-card:hover .person-cta {
-  color: var(--butter);
 }
 
 .person-cta .colon {
