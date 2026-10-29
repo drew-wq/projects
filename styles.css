@@ -2019,6 +2019,20 @@ html {
   will-change: transform;
 }
 
+/* Photo overhangs the frame so the ±10px parallax never shows an edge */
+.partner-portrait {
+  position: relative;
+}
+
+img.partner-portrait-inner {
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 100%;
+  height: calc(100% + 24px);
+  object-fit: cover;
+}
+
 .partner-card {
   position: relative;
   background: var(--n1-bone);
